@@ -58,11 +58,21 @@ Window::Window(int width, int height, const std::string& title) {
         glViewport(0, 0, width, height);
     };
 
+    auto window_drop_callback = [](GLFWwindow* window, int count, const char** paths) {
+        Event::Drop event;
+        event.files.resize(count);
+        for (int i = 0; i < count; ++i) {
+            event.files[i] = paths[i];
+        }
+        self->m_events.push_back(Event(event));
+    };
+
     glfwSetKeyCallback(m_window, key_callback);
     glfwSetMouseButtonCallback(m_window, mouse_button_callback);
     glfwSetCursorPosCallback(m_window, mouse_move_callback);
     glfwSetScrollCallback(m_window, mouse_wheel_callback);
     glfwSetWindowSizeCallback(m_window, window_size_callback);
+    glfwSetDropCallback(m_window, window_drop_callback);
 
     if (instance_count == 0) {
         if (glewInit() != GLEW_OK) {

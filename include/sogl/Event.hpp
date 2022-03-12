@@ -3,7 +3,9 @@
 #pragma once
 
 #include <optional>
+#include <string>
 #include <variant>
+#include <vector>
 
 namespace sogl {
 
@@ -16,6 +18,7 @@ namespace sogl {
         struct MouseMove { int x; int y; };
         struct Scroll { int dx; int dy; };
         struct Resize { int width; int height; };
+        struct Drop { std::vector<std::string> files; };
 
         Event() = default;
 
@@ -28,7 +31,7 @@ namespace sogl {
         }
 
     private:
-        using EventTypes = std::variant<Key, MouseButton, MouseMove, Scroll, Resize>;
+        using EventTypes = std::variant<Key, MouseButton, MouseMove, Scroll, Resize, Drop>;
         EventTypes m_data;
 
         Event(EventTypes);
