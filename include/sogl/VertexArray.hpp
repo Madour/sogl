@@ -10,9 +10,9 @@
 namespace sogl {
 
     struct Vertex {
-        glm::vec2 pos;
-        glm::vec2 tex;
-        glm::vec4 col;
+        glm::vec2 pos = {0.f, 0.f};
+        glm::vec2 tex = {-1.f, -1.f};
+        glm::vec4 col = {1.f, 1.f, 1.f, 1.f};
     };
 
     class VertexArray {
