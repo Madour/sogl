@@ -61,6 +61,6 @@ int main() {
 
 ### Examples
 
-- [Triangle](https://github.com/Madour/sogl/blob/master/examples/triangle.c)
+- [Triangle](https://github.com/Madour/sogl/blob/master/examples/triangle.cpp)
 
 
