@@ -18,14 +18,17 @@ Texture::Texture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-void Texture::load(const std::filesystem::path& file) {
+auto Texture::load(const std::filesystem::path& file) -> bool {
     auto* texture_data = stbi_load(file.string().c_str(), &m_size.x, &m_size.y, &m_chan_count, 0);
 
-    if (texture_data != nullptr) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        stbi_image_free(texture_data);
-    }
+    if (texture_data == nullptr)
+        return false;
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(texture_data);
+
+    return true;
 }
 
 void Texture::bind() const {
