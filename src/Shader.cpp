@@ -71,7 +71,6 @@ auto Shader::load(const char* vert_src, const char* frag_src) -> bool {
         glDeleteShader(shader);
     }
     m_shaders.clear();
-    std::cout << m_program << std::endl;
 
     return true;
 }
