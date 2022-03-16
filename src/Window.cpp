@@ -30,7 +30,7 @@ Window::Window(int width, int height, const std::string& title) {
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1);
-    glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, true);
+    glfwSetInputMode(m_window, GLFW_STICKY_KEYS, true);
     glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, true);
 
     static Window* self;
