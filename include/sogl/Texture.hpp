@@ -11,6 +11,7 @@ namespace sogl {
     class Texture {
     public:
         Texture();
+        ~Texture();
         auto load(const std::filesystem::path& file) -> bool;
 
         void bind() const;
