@@ -37,11 +37,17 @@ Window::Window(int width, int height, const std::string& title) {
     self = this;
 
     auto key_callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        self->m_events.push_back(Event(Event::Key{key, scancode, action, mods}));
+        if (action == GLFW_PRESS)
+            self->m_events.push_back(Event(Event::KeyPress{key, scancode, mods}));
+        else if (action == GLFW_RELEASE)
+            self->m_events.push_back(Event(Event::KeyRelease{key, scancode, mods}));
     };
 
     auto mouse_button_callback = [](GLFWwindow* window, int button, int action, int mods) {
-        self->m_events.push_back(Event(Event::MouseButton{button, action, mods}));
+        if (action == GLFW_PRESS)
+            self->m_events.push_back(Event(Event::MousePress{button, mods}));
+        else if (action == GLFW_RELEASE)
+            self->m_events.push_back(Event(Event::MouseRelease{button, mods}));
     };
 
     auto mouse_move_callback = [](GLFWwindow* window, double x, double y) {

@@ -13,8 +13,10 @@ namespace sogl {
         friend class Window;
 
     public:
-        struct Key { int key; int scancode; int action; int mods; };
-        struct MouseButton { int button; int action; int mods; };
+        struct KeyPress { int key; int scancode; int mods; };
+        struct KeyRelease { int key; int scancode; int mods; };
+        struct MousePress { int button; int mods; };
+        struct MouseRelease { int button; int mods; };
         struct MouseMove { int x; int y; };
         struct Scroll { int dx; int dy; };
         struct Resize { int width; int height; };
@@ -31,7 +33,10 @@ namespace sogl {
         }
 
     private:
-        using EventTypes = std::variant<Key, MouseButton, MouseMove, Scroll, Resize, Drop>;
+        using EventTypes = std::variant<KeyPress, KeyRelease,
+                                        MousePress, MouseRelease,
+                                        MouseMove, Scroll,
+                                        Resize, Drop>;
         EventTypes m_data;
 
         Event(EventTypes);
