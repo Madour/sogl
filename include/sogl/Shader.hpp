@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include <string>
 #include <unordered_map>
 
 #define GLSL(version, src) "#version "#version"\n" #src
