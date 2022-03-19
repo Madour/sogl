@@ -31,10 +31,10 @@ int main() {
     // basic fragment shader
     auto frag_src = GLSL(330 core,
         in vec4 col;
-        out vec4 gl_FragColor;
+        out vec4 fragColor;
 
         void main() {
-            gl_FragColor = col;
+            fragColor = col;
         }
     );
     // create a shader program and load it from the source strings
