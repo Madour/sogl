@@ -63,3 +63,8 @@ int main() {
 
 - [Triangle](https://github.com/Madour/sogl/blob/master/examples/triangle.cpp)
 
+### Showcase
+
+- LDtkViewer app uses **sogl** alongside **Dear ImGui**
+![screenshot1](https://user-images.githubusercontent.com/11854124/161399326-e651cff6-383a-4d0d-9b0c-578cbdcbebf7.png)
+
