@@ -13,7 +13,7 @@ and get going.
 ### Supported features
 
 - Easily open a Window with an OpenGL context
-- Window events (Key, Mousebutton, MouseMove, Scroll, Resize)
+- Window events (KeyPress/KeyRelease, MousePress/MouseRelease, MouseMove, Scroll, Resize, Drop)
 - Textures from file
 - Shaders (vertex and fragment)
 - VertexArray (using vertex buffers and index buffers)
@@ -62,5 +62,4 @@ int main() {
 ### Examples
 
 - [Triangle](https://github.com/Madour/sogl/blob/master/examples/triangle.cpp)
-
 
