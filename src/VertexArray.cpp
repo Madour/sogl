@@ -105,5 +105,5 @@ void VertexArray::bind() const {
 }
 
 void VertexArray::render() const {
-    glDrawElements(GL_TRIANGLES, m_vertices.size() * 6, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 }
