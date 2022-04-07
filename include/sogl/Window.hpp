@@ -5,6 +5,10 @@
 #include <sogl/Event.hpp>
 
 #include <GL/glew.h>
+#if defined(EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#define GLFW_INCLUDE_ES3
+#endif
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 

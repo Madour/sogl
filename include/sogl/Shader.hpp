@@ -8,7 +8,11 @@
 #include <string>
 #include <unordered_map>
 
+#if defined(EMSCRIPTEN)
+#define GLSL(version, src) "#version 300 es\n" #src
+#else
 #define GLSL(version, src) "#version "#version"\n" #src
+#endif
 
 namespace sogl {
 
