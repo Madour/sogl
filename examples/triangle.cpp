@@ -17,6 +17,7 @@ int main() {
 
     // basic vertex shader, its inputs must respect this layout
     auto vert_src = GLSL(330 core,
+        precision highp float;
         layout (location = 0) in vec2 i_pos;
         layout (location = 1) in vec2 i_tex;
         layout (location = 2) in vec4 i_col;
@@ -30,6 +31,7 @@ int main() {
     );
     // basic fragment shader
     auto frag_src = GLSL(330 core,
+        precision highp float;
         in vec4 col;
         out vec4 fragColor;
 
@@ -41,6 +43,7 @@ int main() {
     auto shader = sogl::Shader();
     shader.load(vert_src, frag_src);
 
+#if !defined(EMSCRIPTEN)
     // start main loop
     while (window.isOpen()) {
         window.clear();
@@ -49,6 +52,23 @@ int main() {
         vertex_array.render();
         window.display();
     }
-
+#else
+    struct TriangleExampleContext {
+        sogl::Window& window;
+        sogl::Shader& shader;
+        sogl::VertexArray& vertex_array;
+    };
+    auto app_ctx = TriangleExampleContext{window, shader, vertex_array};
+    auto main_loop = [] (void* arg) {
+        auto* ctx = static_cast<TriangleExampleContext*>(arg);
+        ctx->window.clear();
+        ctx->shader.bind();
+        ctx->vertex_array.bind();
+        ctx->vertex_array.render();
+        ctx->window.display();
+    };
+    // start emscripten main loop
+    emscripten_set_main_loop_arg(main_loop, &app_ctx, 0, EM_TRUE);
+#endif
     return 0;
 }
