@@ -5,7 +5,9 @@
 #include <GL/glew.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "thirdparty/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "thirdparty/stb_image_write.h"
 
 using namespace sogl;
 
@@ -23,15 +25,32 @@ Texture::~Texture() {
 }
 
 auto Texture::load(const std::filesystem::path& file) -> bool {
-    auto* texture_data = stbi_load(file.string().c_str(), &m_size.x, &m_size.y, &m_chan_count, 0);
+    auto* pixels = stbi_load(file.string().c_str(), &m_size.x, &m_size.y, &m_chan_count, 0);
 
-    if (texture_data == nullptr)
+    if (pixels == nullptr)
         return false;
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+    auto pixels_format = m_chan_count == 4 ? GL_RGBA : GL_RGB;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, pixels_format, GL_UNSIGNED_BYTE, pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(texture_data);
+    stbi_image_free(pixels);
+
+    return true;
+}
+
+auto Texture::load(const std::uint8_t* pixels, int width, int height, int channels) -> bool {
+    if (pixels == nullptr)
+        return false;
+
+    m_size.x = width;
+    m_size.y = height;
+    m_chan_count = channels;
+
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    auto pixels_format = m_chan_count == 4 ? GL_RGBA : GL_RGB;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, pixels_format, GL_UNSIGNED_BYTE, pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     return true;
 }

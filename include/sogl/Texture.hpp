@@ -13,6 +13,7 @@ namespace sogl {
         Texture();
         ~Texture();
         auto load(const std::filesystem::path& file) -> bool;
+        auto load(const std::uint8_t* pixels, int width, int height, int channels) -> bool;
 
         void bind() const;
 
