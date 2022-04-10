@@ -53,14 +53,14 @@ int main() {
         window.display();
     }
 #else
-    struct TriangleExampleContext {
+    struct AppContext {
         sogl::Window& window;
         sogl::Shader& shader;
         sogl::VertexArray& vertex_array;
     };
-    auto app_ctx = TriangleExampleContext{window, shader, vertex_array};
+    auto app_ctx = AppContext{window, shader, vertex_array};
     auto main_loop = [] (void* arg) {
-        auto* ctx = static_cast<TriangleExampleContext*>(arg);
+        auto* ctx = static_cast<AppContext*>(arg);
         ctx->window.clear();
         ctx->shader.bind();
         ctx->vertex_array.bind();
