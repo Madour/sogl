@@ -8,4 +8,5 @@ macro(add_example name source)
     endif()
 endmacro()
 
-add_example(triangle triangle.cpp)
+add_example(01-triangle 01_triangle.cpp)
+add_example(texture texture.cpp)
