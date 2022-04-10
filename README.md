@@ -35,7 +35,7 @@ Here is a sample code to try out :
 #include <sogl/sogl.hpp>
 
 int main() {
-    auto window = sogl::Window(1000, 800, "Triangle demo");
+    auto window = sogl::Window(1000, 800, "sogl app");
 
     while (window.isOpen()) {
         while (auto event = window.nextEvent()) {
@@ -61,7 +61,7 @@ int main() {
 
 ### Examples
 
-- [Triangle](https://github.com/Madour/sogl/blob/master/examples/triangle.cpp)
+- [Triangle](https://github.com/Madour/sogl/blob/master/examples/01_triangle.cpp)
 
 ### Showcase
 
