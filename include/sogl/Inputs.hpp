@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <iostream>
+
 namespace sogl {
     enum class Key {
         Unknown = -1,
@@ -124,4 +126,18 @@ namespace sogl {
         RightAlt,
         RightSuper,
     };
+
+    enum class MouseButton {
+        Left,
+        Middle,
+        Right,
+        Extra1,
+        Extra2,
+        Extra3,
+        Extra4,
+        Extra5,
+    };
+
+    auto operator<<(std::ostream& os, Key key) -> std::ostream&;
+    auto operator<<(std::ostream& os, MouseButton btn) -> std::ostream&;
 }
