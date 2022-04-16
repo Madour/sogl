@@ -24,7 +24,12 @@ namespace sogl {
             Count
         };
 
+        Shader() = default;
         ~Shader();
+        Shader(const Shader&) = delete;
+        Shader(Shader&&) = delete;
+        Shader& operator=(const Shader&) = delete;
+        Shader& operator=(const Shader&&) = delete;
 
         auto load(const char* vert_src, const char* frag_src) -> bool;
         void bind() const;
