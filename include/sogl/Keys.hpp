@@ -50,6 +50,7 @@ namespace sogl {
         Y,
         Z,
         LeftBracket,
+        Backslash,
         RightBracket,
         GraveAccent,
 

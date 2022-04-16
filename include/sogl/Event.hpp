@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <sogl/Keys.hpp>
+
+#include <initializer_list>
 #include <optional>
 #include <string>
 #include <variant>
@@ -13,8 +16,8 @@ namespace sogl {
         friend class Window;
 
     public:
-        struct KeyPress { int key; int scancode; int mods; };
-        struct KeyRelease { int key; int scancode; int mods; };
+        struct KeyPress { Key key; int scancode; int mods; };
+        struct KeyRelease { Key key; int scancode; int mods; };
         struct MousePress { int button; int mods; };
         struct MouseRelease { int button; int mods; };
         struct MouseMove { int x; int y; };
@@ -40,6 +43,7 @@ namespace sogl {
         EventTypes m_data;
 
         Event(EventTypes);
+        Event(const EventTypes& event, std::initializer_list<int> args, const char** paths=nullptr);
     };
 
 }
