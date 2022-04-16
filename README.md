@@ -2,13 +2,11 @@
 
 >**This is a WIP project**
 
-sogl (for Simple OpenGL) is a light library for creating OpenGL applications.
+sogl (Simple OpenGL) is a light library for creating OpenGL applications.
 
-It is best used as a subproject (either using git submodules or CMake FetchContent)
+It is best used as a subproject (using either git submodules or CMake FetchContent).
 
 The goal of this library is to provide quick and simple tools for creating OpenGL applications.
-It is not meant to become a fully fledged graphics API, just the minimum to be able to start right off the bat
-and get going.
 
 ### Supported features
 
@@ -35,17 +33,17 @@ Here is a sample code to try out :
 #include <sogl/sogl.hpp>
 
 int main() {
-    auto window = sogl::Window(1000, 800, "sogl app");
+    auto window = sogl::Window(960, 540, "sogl app");
 
     while (window.isOpen()) {
         while (auto event = window.nextEvent()) {
-            if (auto key = event->as<sogl::Event::Key>()) {
-                if (key->key == GLFW_KEY_ESCAPE) {
+            if (auto press = event->as<sogl::Event::KeyPress>()) {
+                if (press->key == sogl::Key::Escape) {
                     window.close();
                 }
             }
-            else if (auto click = event->as<sogl::Event::MouseButton>()){
-                if (click->button == GLFW_MOUSE_BUTTON_LEFT && click->action == GLFW_PRESS) {
+            else if (auto mouse_press = event->as<sogl::Event::MousePress>()){
+                if (mouse_press->button == sogl::MouseButton::Left) {
                     auto mouse_pos = window.getMousePosition();
                     std::cout << "Left click at (" << mouse_pos.x << ", " << mouse_pos.y << ")\n";
                 }
@@ -62,6 +60,7 @@ int main() {
 ### Examples
 
 - [Triangle](https://github.com/Madour/sogl/blob/master/examples/01_triangle.cpp)
+- [Events](https://github.com/Madour/sogl/blob/master/examples/02_events.cpp)
 
 ### Showcase
 
