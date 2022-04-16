@@ -12,6 +12,11 @@ namespace sogl {
     public:
         Texture();
         ~Texture();
+        Texture(const Texture&) = delete;
+        Texture(Texture&&) = delete;
+        Texture& operator=(const Texture&) = delete;
+        Texture& operator=(const Texture&&) = delete;
+
         auto load(const std::filesystem::path& file) -> bool;
         auto load(const std::uint8_t* pixels, int width, int height, int channels) -> bool;
 
