@@ -16,6 +16,7 @@ using namespace sogl;
 
 namespace {
     auto keyFromGlfw(int key) -> Key;
+    auto mouseButtonFromGlfw(int btn) -> MouseButton;
 }
 
 Event::Event(EventTypes data) : m_data(std::move(data))
@@ -40,13 +41,13 @@ Event::Event(const EventTypes& event, std::initializer_list<int> args, const cha
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MousePress{button, mods};
+        m_data = Event::MousePress{mouseButtonFromGlfw(button), mods};
     }
     else if (std::holds_alternative<MouseRelease>(event)) {
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MouseRelease{button, mods};
+        m_data = Event::MouseRelease{mouseButtonFromGlfw(button), mods};
     }
     else if (std::holds_alternative<MouseMove>(event)) {
         auto x = *(args.begin() + 0);
@@ -320,6 +321,29 @@ namespace {
                 return Key::Unknown;
             default:
                 return Key::Unknown;
+        }
+    }
+
+    auto mouseButtonFromGlfw(int btn) -> MouseButton {
+        switch (btn) {
+            case GLFW_MOUSE_BUTTON_1:
+                return MouseButton::Left;
+            case GLFW_MOUSE_BUTTON_2:
+                return MouseButton::Right;
+            case GLFW_MOUSE_BUTTON_3:
+                return MouseButton::Middle;
+            case GLFW_MOUSE_BUTTON_4:
+                return MouseButton::Extra1;
+            case GLFW_MOUSE_BUTTON_5:
+                return MouseButton::Extra2;
+            case GLFW_MOUSE_BUTTON_6:
+                return MouseButton::Extra3;
+            case GLFW_MOUSE_BUTTON_7:
+                return MouseButton::Extra4;
+            case GLFW_MOUSE_BUTTON_8:
+                return MouseButton::Extra5;
+            default:
+                return MouseButton::Unknown;
         }
     }
 }
