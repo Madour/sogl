@@ -28,26 +28,26 @@ Event::Event(const EventTypes& event, std::initializer_list<int> args, const cha
         auto scancode = *(args.begin() + 1);
         auto action = *(args.begin() + 2);
         auto mods = *(args.begin() + 3);
-        m_data = KeyPress{keyFromGlfw(key), scancode, mods};
+        m_data = KeyPress{keyFromGlfw(key), scancode, KeyMod(mods)};
     }
     else if (std::holds_alternative<KeyRelease>(event)) {
         auto key = *(args.begin() + 0);
         auto scancode = *(args.begin() + 1);
         auto action = *(args.begin() + 2);
         auto mods = *(args.begin() + 3);
-        m_data = KeyRelease{keyFromGlfw(key), scancode, mods};
+        m_data = KeyRelease{keyFromGlfw(key), scancode, KeyMod(mods)};
     }
     else if (std::holds_alternative<MousePress>(event)) {
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MousePress{mouseButtonFromGlfw(button), mods};
+        m_data = Event::MousePress{mouseButtonFromGlfw(button), KeyMod(mods)};
     }
     else if (std::holds_alternative<MouseRelease>(event)) {
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MouseRelease{mouseButtonFromGlfw(button), mods};
+        m_data = Event::MouseRelease{mouseButtonFromGlfw(button), KeyMod(mods)};
     }
     else if (std::holds_alternative<MouseMove>(event)) {
         auto x = *(args.begin() + 0);

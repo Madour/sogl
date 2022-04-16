@@ -2,11 +2,22 @@
 
 #include <sogl/Inputs.hpp>
 
+#include <iomanip>
+
 using namespace sogl;
 
 namespace {
     auto keyToString(Key key) -> const char*;
     auto mouseButtonToString(MouseButton btn) -> const char*;
+}
+
+auto sogl::operator|(KeyMod left, KeyMod right) -> KeyMod {
+    return KeyMod(static_cast<std::uint8_t>(left) |
+                  static_cast<std::uint8_t>(right));
+}
+
+auto sogl::operator&(KeyMod left, KeyMod right) -> bool {
+    return static_cast<std::uint8_t>(left) & static_cast<std::uint8_t>(right);
 }
 
 auto sogl::operator<<(std::ostream& os, Key key) -> std::ostream& {
@@ -16,6 +27,11 @@ auto sogl::operator<<(std::ostream& os, Key key) -> std::ostream& {
 
 auto sogl::operator<<(std::ostream& os, MouseButton btn) -> std::ostream& {
     os << "MouseButton<" << mouseButtonToString(btn) << ">";
+    return os;
+}
+
+auto sogl::operator<<(std::ostream& os, KeyMod mod) -> std::ostream& {
+    os << "KeyMod<0x" << std::hex << std::setfill('0') << std::setw(2) << int(mod) << ">";
     return os;
 }
 
