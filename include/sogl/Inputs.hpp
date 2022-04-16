@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 
 namespace sogl {
@@ -139,6 +140,18 @@ namespace sogl {
         Extra5,
     };
 
+    enum class KeyMod : std::uint8_t {
+        Shift       = 0x01,
+        Control     = 0x02,
+        Alt         = 0x04,
+        Super       = 0x08,
+        CapsLock    = 0x10,
+        NumLock     = 0x20,
+    };
+    auto operator|(KeyMod left, KeyMod right) -> KeyMod;
+    auto operator&(KeyMod left, KeyMod right) -> bool;
+
     auto operator<<(std::ostream& os, Key key) -> std::ostream&;
     auto operator<<(std::ostream& os, MouseButton btn) -> std::ostream&;
+    auto operator<<(std::ostream& os, KeyMod btn) -> std::ostream&;
 }
