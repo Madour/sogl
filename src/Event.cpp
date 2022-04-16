@@ -2,7 +2,7 @@
 
 #include <sogl/Event.hpp>
 
-#include <sogl/Keys.hpp>
+#include <sogl/Inputs.hpp>
 
 #if defined(EMSCRIPTEN)
 #include <emscripten/emscripten.h>

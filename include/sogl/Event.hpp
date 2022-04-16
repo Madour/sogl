@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <sogl/Keys.hpp>
+#include <sogl/Inputs.hpp>
 
 #include <initializer_list>
 #include <optional>
