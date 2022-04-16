@@ -18,8 +18,8 @@ namespace sogl {
     public:
         struct KeyPress { Key key; int scancode; int mods; };
         struct KeyRelease { Key key; int scancode; int mods; };
-        struct MousePress { int button; int mods; };
-        struct MouseRelease { int button; int mods; };
+        struct MousePress { MouseButton button; int mods; };
+        struct MouseRelease { MouseButton button; int mods; };
         struct MouseMove { int x; int y; };
         struct Scroll { int dx; int dy; };
         struct Resize { int width; int height; };

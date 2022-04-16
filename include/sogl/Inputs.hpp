@@ -128,6 +128,7 @@ namespace sogl {
     };
 
     enum class MouseButton {
+        Unknown = -1,
         Left,
         Middle,
         Right,
