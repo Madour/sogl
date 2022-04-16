@@ -9,4 +9,4 @@ macro(add_example name source)
 endmacro()
 
 add_example(01-triangle 01_triangle.cpp)
-add_example(texture texture.cpp)
+add_example(02-events   02_events.cpp)
