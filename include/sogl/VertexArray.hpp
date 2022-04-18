@@ -22,6 +22,7 @@ namespace sogl {
         VertexArray(const VertexArray&);
         VertexArray& operator=(const VertexArray&);
 
+        void clear();
         void reserve(std::size_t n);
 
         void pushTriangle(const std::array<Vertex, 3>& vertices);
