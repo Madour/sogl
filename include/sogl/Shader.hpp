@@ -39,14 +39,8 @@ namespace sogl {
         template <typename T>
         void setUniform(const std::string& uniform, const T& val);
 
-        template <typename T, glm::length_t S>
-        void setUniform(const std::string& uniform, const glm::vec<S, T, glm::defaultp>& vec);
-
         template <typename T>
         void setUniform(const std::string& uniform, const std::initializer_list<T>& arr);
-
-        template <typename T, glm::length_t S>
-        void setUniform(const std::string& uniform, const std::initializer_list<glm::vec<S, T, glm::defaultp>>& arr);
 
     private:
         auto compile(Type type, const char* src) -> bool;
