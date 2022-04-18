@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(cmake/Macros.cmake)
 
-message(STATUS "Configuring dependencies (glew, glfw and glm)")
+message(STATUS "[sogl] Configuring dependencies (glew, glfw and glm)")
 setup_dependencies()
 
 file(GLOB_RECURSE SRC src/*.cpp)

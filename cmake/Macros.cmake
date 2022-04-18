@@ -1,11 +1,14 @@
 include(FetchContent)
 
 macro(setup_dependencies)
+    set(FETCHCONTENT_QUIET FALSE)
     if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
         FetchContent_Declare(
                 glew
                 GIT_REPOSITORY https://github.com/Perlmint/glew-cmake/
                 GIT_TAG glew-cmake-2.2.0
+                GIT_SHALLOW TRUE
+                GIT_PROGRESS TRUE
         )
         if(NOT glew_POPULATED)
             message(STATUS "[sogl] Fetching GLEW 2.2.0")
@@ -19,6 +22,8 @@ macro(setup_dependencies)
                 glfw
                 GIT_REPOSITORY https://github.com/glfw/glfw
                 GIT_TAG 3.3.6
+                GIT_SHALLOW TRUE
+                GIT_PROGRESS TRUE
         )
         if(NOT glfw_POPULATED)
             message(STATUS "[sogl] Fetching GLFW 3.3.6")
@@ -35,6 +40,8 @@ macro(setup_dependencies)
             glm
             GIT_REPOSITORY https://github.com/g-truc/glm
             GIT_TAG 0.9.9.8
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
     )
     if(NOT glm_POPULATED)
         message(STATUS "[sogl] Fetching glm 0.9.9.8")
