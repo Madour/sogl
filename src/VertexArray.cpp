@@ -52,6 +52,12 @@ void VertexArray::create() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 }
 
+void VertexArray::clear() {
+    m_vertices.clear();
+    m_indices.clear();
+    m_dirty = true;
+}
+
 void VertexArray::reserve(std::size_t n) {
     m_vertices.reserve(n);
     m_indices.reserve((n / 4) * 6);
