@@ -28,7 +28,7 @@ namespace sogl {
         Event() = default;
 
         template <typename T>
-        constexpr auto as() -> std::optional<T> {
+        constexpr auto as() const -> std::optional<T> {
             if (std::holds_alternative<T>(this->m_data)) {
                 return std::get<T>(this->m_data);
             }
