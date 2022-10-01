@@ -13,9 +13,9 @@
 #include <glm/glm.hpp>
 
 #include <chrono>
+#include <list>
 #include <optional>
 #include <string>
-#include <list>
 
 namespace sogl {
 
