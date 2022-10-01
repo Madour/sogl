@@ -12,6 +12,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include <chrono>
 #include <optional>
 #include <string>
 #include <list>
@@ -37,12 +38,13 @@ namespace sogl {
         auto operator&() -> GLFWwindow*;
 
         void clear(const glm::vec<3, float>& color = {0, 0, 0});
-        void display();
+        auto display() -> unsigned;
 
     private:
         GLFWwindow* m_window;
         glm::vec<2, int> m_size;
         std::list<Event> m_events;
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_frame_time;
     };
 
 }
