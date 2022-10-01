@@ -2,6 +2,7 @@
 
 #include <sogl/Window.hpp>
 
+#include <chrono>
 #include <iostream>
 
 using namespace sogl;
@@ -26,6 +27,7 @@ Window::Window(int width, int height, const std::string& title) {
         glfwSetErrorCallback(error_callback);
         glfwInit();
     }
+    m_frame_time = std::chrono::high_resolution_clock::now();
     m_size = {width, height};
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(m_window);
@@ -141,8 +143,13 @@ void Window::clear(const glm::vec<3, float>& color) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Window::display() {
+auto Window::display() -> unsigned {
     glfwSwapBuffers(m_window);
     m_events.clear();
     glfwPollEvents();
+
+    auto now = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_frame_time);
+    m_frame_time = now;
+    return duration.count();
 }
