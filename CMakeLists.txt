@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 project(sogl)
-
-set(CMAKE_CXX_STANDARD 17)
 
 include(cmake/Macros.cmake)
 
@@ -14,6 +12,7 @@ file(GLOB_RECURSE INC include/sogl/*.hpp)
 add_library(sogl STATIC ${SRC} ${INC})
 target_include_directories(sogl PUBLIC include)
 set_target_properties(sogl PROPERTIES DEBUG_POSTFIX -d)
+set_target_properties(sogl PROPERTIES CXX_STANDARD 20)
 target_link_libraries(sogl PUBLIC glm)
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")

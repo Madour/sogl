@@ -2,7 +2,7 @@
 
 >**This is a WIP project**
 
-sogl (Simple OpenGL) is a light library for creating OpenGL applications.
+sogl (Simple OpenGL) is a light library for creating OpenGL applications in C++20.
 
 It is best used as a subproject (using either git submodules or CMake FetchContent).
 
