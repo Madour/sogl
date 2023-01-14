@@ -7,20 +7,19 @@ int main() {
     auto window = sogl::Window(1000, 800, "Triangle demo");
 
     // create a vertex array and push a triangle
-    // vertex data is : vec2 position, vec2 texture_coordinates, vec4 color
-    auto vertex_array = sogl::VertexArray();
+    // vertex data is : vec2 position, vec4 color
+    auto vertex_array = sogl::VertexArray<glm::vec2, glm::vec4>();
     vertex_array.pushTriangle({{
-        {{0.f, -0.5f}, {}, {1.f, 0.f, 0.f, 1.f}},
-        {{0.5f, 0.5f}, {}, {0.f, 1.f, 0.f, 1.f}},
-        {{-0.5f, 0.5f}, {}, {0.f, 0.f, 1.f, 1.f}}
+        {{0.f, -0.5f}, {1.f, 0.f, 0.f, 1.f}},
+        {{0.5f, 0.5f}, {0.f, 1.f, 0.f, 1.f}},
+        {{-0.5f, 0.5f}, {0.f, 0.f, 1.f, 1.f}}
     }});
 
-    // basic vertex shader, its inputs must respect this layout
+    // basic vertex shader, its inputs must respect the vertex array data
     auto vert_src = GLSL(330 core,
         precision highp float;
         layout (location = 0) in vec2 i_pos;
-        layout (location = 1) in vec2 i_tex;
-        layout (location = 2) in vec4 i_col;
+        layout (location = 1) in vec4 i_col;
 
         out vec4 col;
 
@@ -53,22 +52,22 @@ int main() {
         window.display();
     }
 #else
-    struct AppContext {
+    struct App {
         sogl::Window& window;
         sogl::Shader& shader;
-        sogl::VertexArray& vertex_array;
+        sogl::VertexArray<glm::vec2, glm::vec4>& vertex_array;
     };
-    auto app_ctx = AppContext{window, shader, vertex_array};
+    auto app = App{window, shader, vertex_array};
     auto main_loop = [] (void* arg) {
-        auto* ctx = static_cast<AppContext*>(arg);
-        ctx->window.clear();
-        ctx->shader.bind();
-        ctx->vertex_array.bind();
-        ctx->vertex_array.render();
-        ctx->window.display();
+        auto* app = static_cast<App*>(arg);
+        app->window.clear();
+        app->shader.bind();
+        app->vertex_array.bind();
+        app->vertex_array.render();
+        app->window.display();
     };
     // start emscripten main loop
-    emscripten_set_main_loop_arg(main_loop, &app_ctx, 0, EM_TRUE);
+    emscripten_set_main_loop_arg(main_loop, &app, 0, EM_TRUE);
 #endif
     return 0;
 }
