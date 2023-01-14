@@ -72,25 +72,6 @@ namespace sogl {
     }
 
     template <typename... AttrTypes>
-    template <detail::convertible_to_tuple<typename VertexArray<AttrTypes...>::VertexTuple> VertexStruct>
-    void VertexArray<AttrTypes...>::pushTriangle(const std::array<VertexStruct, 3>& vertices) {
-        std::array<VertexTuple, 3> verts = {{vertex(vertices[0]),
-                                             vertex(vertices[1]),
-                                             vertex(vertices[2])}};
-        pushTriangle(verts);
-    }
-
-    template <typename... AttrTypes>
-    template <detail::convertible_to_tuple<typename VertexArray<AttrTypes...>::VertexTuple> VertexStruct>
-    void VertexArray<AttrTypes...>::pushQuad(const std::array<VertexStruct, 4>& vertices) {
-        std::array<VertexTuple, 4> verts = {{vertex(vertices[0]),
-                                             vertex(vertices[1]),
-                                             vertex(vertices[2]),
-                                             vertex(vertices[3])}};
-        pushQuad(verts);
-    }
-
-    template <typename... AttrTypes>
     void VertexArray<AttrTypes...>::bind() const {
         if (m_dirty) {
 

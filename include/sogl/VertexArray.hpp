@@ -28,10 +28,14 @@ namespace sogl {
         void pushQuad(const std::array<VertexTuple, 4>& vertices);
 
         template <detail::convertible_to_tuple<VertexTuple> VertexStruct>
-        void pushTriangle(const std::array<VertexStruct, 3>& vertices);
+        void pushTriangle(const std::array<VertexStruct, 3>& vertices) {
+            pushTriangle({{ vertex(vertices[0]), vertex(vertices[1]), vertex(vertices[2]) }});
+        }
 
         template <detail::convertible_to_tuple<VertexTuple> VertexStruct>
-        void pushQuad(const std::array<VertexStruct, 4>& vertices);
+        void pushQuad(const std::array<VertexStruct, 4>& vertices) {
+            pushQuad({{ vertex(vertices[0]), vertex(vertices[1]), vertex(vertices[2]), vertex(vertices[3]) }});
+        }
 
         void bind() const;
         void render() const;
