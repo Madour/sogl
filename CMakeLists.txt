@@ -7,7 +7,7 @@ message(STATUS "[sogl] Configuring dependencies (glew, glfw and glm)")
 setup_dependencies()
 
 file(GLOB_RECURSE SRC src/*.cpp)
-file(GLOB_RECURSE INC include/sogl/*.hpp)
+file(GLOB_RECURSE INC include/sogl/*.hpp include/sogl/*.tpp)
 
 add_library(sogl STATIC ${SRC} ${INC})
 target_include_directories(sogl PUBLIC include)
