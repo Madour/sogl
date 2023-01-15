@@ -18,10 +18,11 @@ The goal of this library is to provide quick and simple tools for creating OpenG
 
 ### Get started
 
-Just download sogl and add this line to your CMakeLists
+Just download sogl and add these lines to your CMakeLists
 
 ```cmake
 add_subdirectory(sogl)
+target_link_libraries(YOUR_TARGET PUBLIC sogl::sogl)
 ```
 
 sogl will automatically download and link its dependencies.
@@ -61,6 +62,7 @@ int main() {
 
 - [Triangle](https://github.com/Madour/sogl/blob/master/examples/01_triangle.cpp)
 - [Events](https://github.com/Madour/sogl/blob/master/examples/02_events.cpp)
+- [Cube](https://github.com/Madour/sogl/blob/master/examples/03_cube.cpp)
 
 ### Showcase
 
