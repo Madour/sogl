@@ -34,6 +34,7 @@ namespace sogl {
         auto nextEvent() -> std::optional<Event>;
 
         [[nodiscard]] auto getMousePosition() const -> glm::vec<2, int>;
+        [[nodiscard]] auto isKeyPressed(Key key) const -> bool;
 
         auto operator&() -> GLFWwindow*;
 
