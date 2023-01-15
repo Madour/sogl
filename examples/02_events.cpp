@@ -50,30 +50,37 @@ int main() {
     // create a window
     auto window = sogl::Window(960, 540, "Events demo");
 
-#if !defined(EMSCRIPTEN)
-    // start main loop
-    while (window.isOpen()) {
+    auto update_fn = [&]() {
         while (auto event = window.nextEvent()) {
             processEvent(event.value());
         }
+    };
+
+    auto render_fn = [&]() {
         window.clear();
         window.display();
+    };
+
+#if !defined(EMSCRIPTEN)
+    // start main loop
+    while (window.isOpen()) {
+        update_fn();
+        render_fn();
     }
 #else
-    struct AppContext {
-        sogl::Window& window;
+    struct App {
+        std::function<void()> update;
+        std::function<void()> render;
     };
-    auto app_ctx = AppContext{window};
+    auto app = App{update_fn, render_fn};
     auto main_loop = [] (void* arg) {
-        auto* ctx = static_cast<AppContext*>(arg);
-        while(auto event = ctx->window.nextEvent()) {
-            processEvent(event.value());
-        }
-        ctx->window.clear();
-        ctx->window.display();
+        auto* app = static_cast<App*>(arg);
+
+        app->update();
+        app->render();
     };
     // start emscripten main loop
-    emscripten_set_main_loop_arg(main_loop, &app_ctx, 0, EM_TRUE);
+    emscripten_set_main_loop_arg(main_loop, &app, 0, EM_TRUE);
 #endif
     return 0;
 }
