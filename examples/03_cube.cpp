@@ -111,7 +111,7 @@ int main() {
     glm::mat4 camera = glm::lookAt(glm::vec3(5, 3, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
     float angle = 0.f;
-    unsigned dt_ms = 0;
+    float dt = 0.f;
 
     auto update_fn = [&]() {
         while (const auto& event = window.nextEvent()) {
@@ -121,7 +121,7 @@ int main() {
             }
         }
 
-        angle += 120.f * static_cast<float>(dt_ms) / 1000.f;
+        angle += 120.f * dt;
     };
 
     auto render_fn = [&]() {
@@ -143,7 +143,8 @@ int main() {
         axis.bind();
         axis.render();
 
-        dt_ms = window.display();
+        auto dt_ms = window.display();
+        dt = static_cast<float>(dt_ms) / 1000.f;
     };
 
 #if !defined(EMSCRIPTEN)
