@@ -18,6 +18,7 @@ file(GLOB_RECURSE SRC src/*.cpp)
 file(GLOB_RECURSE INC include/sogl/*.hpp include/sogl/*.tpp)
 
 add_library(sogl STATIC ${SRC} ${INC})
+add_library(sogl::sogl ALIAS sogl)
 target_include_directories(sogl PUBLIC include)
 set_target_properties(sogl PROPERTIES DEBUG_POSTFIX -d)
 set_target_properties(sogl PROPERTIES CXX_STANDARD 20)
