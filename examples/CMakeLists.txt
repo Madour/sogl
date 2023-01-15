@@ -11,3 +11,4 @@ endmacro()
 
 add_example(01-triangle 01_triangle.cpp)
 add_example(02-events   02_events.cpp)
+add_example(03-cube     03_cube.cpp)
