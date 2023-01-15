@@ -42,29 +42,27 @@ int main() {
     auto shader = sogl::Shader();
     shader.load(vert_src, frag_src);
 
-#if !defined(EMSCRIPTEN)
-    // start main loop
-    while (window.isOpen()) {
+    auto render_fn = [&]() {
         window.clear();
         shader.bind();
         vertex_array.bind();
         vertex_array.render();
         window.display();
+    };
+
+#if !defined(EMSCRIPTEN)
+    // start main loop
+    while (window.isOpen()) {
+        render_fn();
     }
 #else
     struct App {
-        sogl::Window& window;
-        sogl::Shader& shader;
-        sogl::VertexArray<glm::vec2, glm::vec4>& vertex_array;
+        std::function<void()> render;
     };
-    auto app = App{window, shader, vertex_array};
+    auto app = App{render_fn};
     auto main_loop = [] (void* arg) {
         auto* app = static_cast<App*>(arg);
-        app->window.clear();
-        app->shader.bind();
-        app->vertex_array.bind();
-        app->vertex_array.render();
-        app->window.display();
+        app->render();
     };
     // start emscripten main loop
     emscripten_set_main_loop_arg(main_loop, &app, 0, EM_TRUE);
