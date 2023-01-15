@@ -5,8 +5,13 @@
 namespace sogl {
 
     template <typename... AttrTypes>
-    VertexArray<AttrTypes...>::VertexArray() {
+    VertexArray<AttrTypes...>::VertexArray(Primitive primitive_type) : m_primitive_type(primitive_type) {
         create();
+    }
+
+    template <typename... AttrTypes>
+    void VertexArray<AttrTypes...>::setPrimitiveType(sogl::Primitive primitive_type) {
+        m_primitive_type = primitive_type;
     }
 
     template <typename... AttrTypes>
@@ -113,7 +118,8 @@ namespace sogl {
 
     template <typename... AttrTypes>
     void VertexArray<AttrTypes...>::render() const {
-        glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(static_cast<std::underlying_type_t<Primitive>>(m_primitive_type),
+                       m_indices.size(), GL_UNSIGNED_INT, nullptr);
     }
 
 }

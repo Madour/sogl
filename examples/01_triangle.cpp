@@ -8,11 +8,11 @@ int main() {
 
     // create a vertex array and push a triangle
     // vertex data is : vec2 position, vec4 color
-    auto vertex_array = sogl::VertexArray<glm::vec2, glm::vec4>();
+    auto vertex_array = sogl::VertexArray<glm::vec2, glm::vec4>(sogl::Primitive::Triangles);
     vertex_array.pushTriangle({{
-        {{0.f, -0.5f}, {1.f, 0.f, 0.f, 1.f}},
-        {{0.5f, 0.5f}, {0.f, 1.f, 0.f, 1.f}},
-        {{-0.5f, 0.5f}, {0.f, 0.f, 1.f, 1.f}}
+        {{0.f, 0.5f}, {1.f, 0.f, 0.f, 1.f}},
+        {{0.5f, -0.5f}, {0.f, 1.f, 0.f, 1.f}},
+        {{-0.5f, -0.5f}, {0.f, 0.f, 1.f, 1.f}}
     }});
 
     // basic vertex shader, its inputs must respect the vertex array data
@@ -25,7 +25,7 @@ int main() {
 
         void main() {
             col = i_col;
-            gl_Position = vec4(i_pos.x, -i_pos.y, 0, 1.0);
+            gl_Position = vec4(i_pos.xy, 0, 1.0);
         }
     );
     // basic fragment shader
