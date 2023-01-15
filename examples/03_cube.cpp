@@ -16,7 +16,7 @@ int main() {
     const auto cyan = glm::vec4(0.f, 1.f, 1.f, 1.f);
     const auto magenta = glm::vec4(1.f, 0.f, 1.f, 1.f);
 
-    auto cube = sogl::VertexArray<glm::vec3, glm::vec4>();
+    auto cube = sogl::VertexArray<glm::vec3, glm::vec4>(sogl::Primitive::Triangles);
     // bottom
     cube.pushQuad({{
            {{-1, -1, -1}, magenta},
@@ -60,24 +60,18 @@ int main() {
            {{-1, 1, 1}, green}
     }});
 
-    auto axis = sogl::VertexArray<glm::vec3, glm::vec4>();
+    auto axis = sogl::VertexArray<glm::vec3, glm::vec4>(sogl::Primitive::Lines);
     axis.pushQuad({{
-            {{0, -0.01, 0}, red},
-            {{50, -0.01, 0}, red},
-            {{50, 0.01, 0}, red},
-            {{0, 0.01, 0}, red},
+            {{0, 0, 0}, red},
+            {{50, 0, 0}, red},
     }});
     axis.pushQuad({{
-            {{-0.01, 0, 0}, green},
-            {{-0.01, 50, 0}, green},
-            {{0.01, 50, 0}, green},
-            {{0.01, 0, 0}, green},
+            {{0, 0, 0}, green},
+            {{0, 50, 0}, green},
     }});
     axis.pushQuad({{
-            {{-0.01, 0, 0}, blue},
-            {{-0.01, 0, 50}, blue},
-            {{0.01, 0, 50}, blue},
-            {{0.01, 0, 0}, blue},
+            {{0, 0, 0}, blue},
+            {{0, 0, 50}, blue},
     }});
 
     // vertex shader with projection view matrix calculation

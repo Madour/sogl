@@ -18,6 +18,21 @@ namespace sogl {
         inline constexpr bool is_brace_constructible_v = requires { T{std::declval<Args>()...}; };
     }
 
+    enum class Primitive : GLenum {
+        Points = GL_POINTS,
+        Lines = GL_LINES,
+        LineLoop = GL_LINE_LOOP,
+        LineStrip = GL_LINE_STRIP,
+        Triangles = GL_TRIANGLES,
+        TriangleStrip = GL_TRIANGLE_STRIP,
+        TriangleFan = GL_TRIANGLE_FAN,
+        LinesAdjacency = GL_LINES_ADJACENCY,
+        LineStripAdjacency = GL_LINE_STRIP_ADJACENCY,
+        TrianglesAdjacency = GL_TRIANGLES_ADJACENCY,
+        TriangleStripAdjacency = GL_TRIANGLE_STRIP_ADJACENCY,
+        Patches = GL_PATCHES,
+    };
+
     template<class T>
     auto vertex(T&& object) noexcept {
         using type = std::decay_t<T>;

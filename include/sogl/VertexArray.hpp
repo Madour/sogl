@@ -22,7 +22,9 @@ namespace sogl {
         using VertexTuple = std::tuple<AttrTypes...>;
 
     public:
-        VertexArray();
+        explicit VertexArray(Primitive primitive_type = Primitive::Triangles);
+
+        void setPrimitiveType(sogl::Primitive primitive_type);
 
         void pushTriangle(const std::array<VertexTuple, 3>& vertices);
         void pushQuad(const std::array<VertexTuple, 4>& vertices);
@@ -49,6 +51,8 @@ namespace sogl {
         template <unsigned I = 0>
         void pushVertexToBuffer(std::vector<float>& vec, const VertexTuple& vert) const;
 
+        Primitive m_primitive_type;
+
         unsigned m_vao = 0;
         unsigned m_vbo = 0;
         unsigned m_ibo = 0;
@@ -58,7 +62,6 @@ namespace sogl {
 
         mutable std::vector<float> m_buffer;
         mutable bool m_dirty = false;
-
     };
 }
 
