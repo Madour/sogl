@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
-project(sogl)
+
+project(
+    sogl
+    VERSION 0.3.0
+    DESCRIPTION "A simple and light library for creating OpenGL application"
+    LANGUAGES CXX
+    HOMEPAGE_URL "https://github.com/Madour/sogl"
+)
 
 include(cmake/Macros.cmake)
 
