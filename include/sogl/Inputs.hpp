@@ -148,8 +148,9 @@ namespace sogl {
         CapsLock    = 0x10,
         NumLock     = 0x20,
     };
-    auto operator|(KeyMod left, KeyMod right) -> KeyMod;
-    auto operator&(KeyMod left, KeyMod right) -> bool;
+    auto operator|(const KeyMod& left, const KeyMod& right) -> KeyMod;
+    auto operator|=(KeyMod& left, const KeyMod& right) -> KeyMod;
+    auto operator&(const KeyMod& left, const KeyMod& right) -> bool;
 
     auto operator<<(std::ostream& os, Key key) -> std::ostream&;
     auto operator<<(std::ostream& os, MouseButton btn) -> std::ostream&;
