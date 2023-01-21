@@ -16,6 +16,7 @@ using namespace sogl;
 
 namespace {
     auto keyFromGlfw(int key) -> Key;
+    auto keyModFromGlfw(int mod) -> KeyMod;
     auto mouseButtonFromGlfw(int btn) -> MouseButton;
 }
 
@@ -28,26 +29,26 @@ Event::Event(const EventTypes& event, std::initializer_list<int> args, const cha
         auto scancode = *(args.begin() + 1);
         auto action = *(args.begin() + 2);
         auto mods = *(args.begin() + 3);
-        m_data = KeyPress{keyFromGlfw(key), scancode, KeyMod(mods)};
+        m_data = KeyPress{keyFromGlfw(key), scancode, keyModFromGlfw(mods)};
     }
     else if (std::holds_alternative<KeyRelease>(event)) {
         auto key = *(args.begin() + 0);
         auto scancode = *(args.begin() + 1);
         auto action = *(args.begin() + 2);
         auto mods = *(args.begin() + 3);
-        m_data = KeyRelease{keyFromGlfw(key), scancode, KeyMod(mods)};
+        m_data = KeyRelease{keyFromGlfw(key), scancode, keyModFromGlfw(mods)};
     }
     else if (std::holds_alternative<MousePress>(event)) {
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MousePress{mouseButtonFromGlfw(button), KeyMod(mods)};
+        m_data = Event::MousePress{mouseButtonFromGlfw(button), keyModFromGlfw(mods)};
     }
     else if (std::holds_alternative<MouseRelease>(event)) {
         auto button = *(args.begin() + 0);
         auto action = *(args.begin() + 1);
         auto mods = *(args.begin() + 2);
-        m_data = Event::MouseRelease{mouseButtonFromGlfw(button), KeyMod(mods)};
+        m_data = Event::MouseRelease{mouseButtonFromGlfw(button), keyModFromGlfw(mods)};
     }
     else if (std::holds_alternative<MouseMove>(event)) {
         auto x = *(args.begin() + 0);
@@ -322,6 +323,17 @@ namespace {
             default:
                 return Key::Unknown;
         }
+    }
+
+    auto keyModFromGlfw(int mod) -> KeyMod {
+        KeyMod ret = KeyMod::None;
+        if (mod & GLFW_MOD_SHIFT) ret |= KeyMod::Shift;
+        if (mod & GLFW_MOD_CONTROL) ret |= KeyMod::Control;
+        if (mod & GLFW_MOD_ALT) ret |= KeyMod::Alt;
+        if (mod & GLFW_MOD_SUPER) ret |= KeyMod::Super;
+        if (mod & GLFW_MOD_CAPS_LOCK) ret |= KeyMod::CapsLock;
+        if (mod & GLFW_MOD_NUM_LOCK) ret |= KeyMod::NumLock;
+        return ret;
     }
 
     auto mouseButtonFromGlfw(int btn) -> MouseButton {
