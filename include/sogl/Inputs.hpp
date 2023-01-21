@@ -141,6 +141,7 @@ namespace sogl {
     };
 
     enum class KeyMod : std::uint8_t {
+        None        = 0x00,
         Shift       = 0x01,
         Control     = 0x02,
         Alt         = 0x04,
