@@ -11,13 +11,19 @@ namespace {
     auto mouseButtonToString(MouseButton btn) -> const char*;
 }
 
-auto sogl::operator|(KeyMod left, KeyMod right) -> KeyMod {
-    return KeyMod(static_cast<std::uint8_t>(left) |
-                  static_cast<std::uint8_t>(right));
+auto sogl::operator|(const KeyMod& left, const KeyMod& right) -> KeyMod {
+    return KeyMod(static_cast<std::underlying_type_t<KeyMod>>(left) |
+                  static_cast<std::underlying_type_t<KeyMod>>(right));
 }
 
-auto sogl::operator&(KeyMod left, KeyMod right) -> bool {
-    return static_cast<std::uint8_t>(left) & static_cast<std::uint8_t>(right);
+auto sogl::operator|=(KeyMod& left, const KeyMod& right) -> KeyMod {
+    left = left | right;
+    return left;
+}
+
+auto sogl::operator&(const KeyMod& left, const KeyMod& right) -> bool {
+    return static_cast<std::underlying_type_t<KeyMod>>(left)
+         & static_cast<std::underlying_type_t<KeyMod>>(right);
 }
 
 auto sogl::operator<<(std::ostream& os, Key key) -> std::ostream& {
