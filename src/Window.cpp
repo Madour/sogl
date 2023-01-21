@@ -85,19 +85,23 @@ Window::Window(int width, int height, const std::string& title) {
         if (glewInit() != GLEW_OK) {
             std::cerr << "Failed to initialize glew" << std::endl;
         }
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#if !defined(EMSCRIPTEN)
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(gl_debug_msg_cb, nullptr);
-#endif
-        window_size_callback(m_window, m_size.x, m_size.y);
         std::cout << "OpenGL version " << glGetString(GL_VERSION) << std::endl;
     }
     instance_count += 1;
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#if !defined(EMSCRIPTEN)
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(gl_debug_msg_cb, nullptr);
+#endif
+
+    window_size_callback(m_window, m_size.x, m_size.y);
 }
 
 Window::~Window() {
