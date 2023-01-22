@@ -7,7 +7,7 @@
 
 int main() {
     // create a window
-    auto window = sogl::Window(800, 600, "Triangle demo");
+    auto window = sogl::Window(800, 600, "Rotating cube demo");
 
     const auto red = glm::vec4(1.f, 0.f, 0.f, 1.f);
     const auto green = glm::vec4(0.f, 1.f, 0.f, 1.f);

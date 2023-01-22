@@ -32,7 +32,7 @@ private:
 
 int main() {
     // create a window
-    auto window = sogl::Window(800, 600, "Triangle demo");
+    auto window = sogl::Window(800, 600, "3D camera demo");
     // and hide the cursor
     glfwSetInputMode(&window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
