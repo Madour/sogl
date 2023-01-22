@@ -4,12 +4,6 @@
 
 #include <sogl/Event.hpp>
 
-#include <GL/glew.h>
-#if defined(EMSCRIPTEN)
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
-#endif
-#include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -36,13 +30,13 @@ namespace sogl {
         [[nodiscard]] auto getMousePosition() const -> glm::vec<2, int>;
         [[nodiscard]] auto isKeyPressed(Key key) const -> bool;
 
-        auto operator&() -> GLFWwindow*;
+        auto getHandle() -> void*;
 
         void clear(const glm::vec<3, float>& color = {0, 0, 0});
         auto display() -> unsigned;
 
     private:
-        GLFWwindow* m_window;
+        void* m_handle = nullptr;
         glm::vec<2, int> m_size;
         std::list<Event> m_events;
         std::chrono::time_point<std::chrono::high_resolution_clock> m_frame_time;

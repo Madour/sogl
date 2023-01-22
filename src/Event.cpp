@@ -331,8 +331,10 @@ namespace {
         if (mod & GLFW_MOD_CONTROL) ret |= KeyMod::Control;
         if (mod & GLFW_MOD_ALT) ret |= KeyMod::Alt;
         if (mod & GLFW_MOD_SUPER) ret |= KeyMod::Super;
+#if !defined(EMSCRIPTEN) // emscripten's version of GLFW3 does not have macros for caps and num locks keys
         if (mod & GLFW_MOD_CAPS_LOCK) ret |= KeyMod::CapsLock;
         if (mod & GLFW_MOD_NUM_LOCK) ret |= KeyMod::NumLock;
+#endif
         return ret;
     }
 

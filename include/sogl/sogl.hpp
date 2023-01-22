@@ -7,3 +7,7 @@
 #include <sogl/Texture.hpp>
 #include <sogl/VertexArray.hpp>
 #include <sogl/Window.hpp>
+
+#if defined(EMSCRIPTEN)
+#include <emscripten.h>
+#endif

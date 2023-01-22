@@ -7,6 +7,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <GLFW/glfw3.h>
+
 
 struct Camera {
     const float fov = 45.f;
@@ -34,7 +36,7 @@ int main() {
     // create a window
     auto window = sogl::Window(800, 600, "3D camera demo");
     // and hide the cursor
-    glfwSetInputMode(&window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(static_cast<GLFWwindow*>(window.getHandle()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     const auto red = glm::vec4(1.f, 0.f, 0.f, 1.f);
     const auto green = glm::vec4(0.f, 1.f, 0.f, 1.f);

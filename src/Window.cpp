@@ -2,6 +2,13 @@
 
 #include <sogl/Window.hpp>
 
+#include <GL/glew.h>
+#if defined(EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#define GLFW_INCLUDE_ES3
+#endif
+#include <GLFW/glfw3.h>
+
 #include <chrono>
 #include <iostream>
 
@@ -18,6 +25,11 @@ namespace {
                   << "id = " << id << ", source = " << source << ", type = " << type << ", severity = " << severity
                   << "\n" << message << "\n" << std::endl;
     }
+
+    inline auto getGlfwWindow(void* handle) -> GLFWwindow*{
+        return static_cast<GLFWwindow*>(handle);
+    }
+
     auto keyToGlfw(Key key) -> int;
 }
 
@@ -30,14 +42,14 @@ Window::Window(int width, int height, const std::string& title) {
     }
     m_frame_time = std::chrono::high_resolution_clock::now();
     m_size = {width, height};
-    m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    glfwMakeContextCurrent(m_window);
+    auto* glfw_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    glfwMakeContextCurrent(glfw_window);
     glfwSwapInterval(1);
 #if !defined(EMSCRIPTEN)
-    glfwSetInputMode(m_window, GLFW_LOCK_KEY_MODS, true);
+    glfwSetInputMode(glfw_window, GLFW_LOCK_KEY_MODS, true);
 #endif
-    glfwSetInputMode(m_window, GLFW_STICKY_KEYS, true);
-    glfwSetInputMode(m_window, GLFW_STICKY_MOUSE_BUTTONS, true);
+    glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, true);
+    glfwSetInputMode(glfw_window, GLFW_STICKY_MOUSE_BUTTONS, true);
 
     static Window* self;
     self = this;
@@ -74,12 +86,12 @@ Window::Window(int width, int height, const std::string& title) {
          self->m_events.push_back(Event(Event::Drop{}, {count}, paths));
     };
 
-    glfwSetKeyCallback(m_window, key_callback);
-    glfwSetMouseButtonCallback(m_window, mouse_button_callback);
-    glfwSetCursorPosCallback(m_window, mouse_move_callback);
-    glfwSetScrollCallback(m_window, mouse_wheel_callback);
-    glfwSetWindowSizeCallback(m_window, window_size_callback);
-    glfwSetDropCallback(m_window, window_drop_callback);
+    glfwSetKeyCallback(glfw_window, key_callback);
+    glfwSetMouseButtonCallback(glfw_window, mouse_button_callback);
+    glfwSetCursorPosCallback(glfw_window, mouse_move_callback);
+    glfwSetScrollCallback(glfw_window, mouse_wheel_callback);
+    glfwSetWindowSizeCallback(glfw_window, window_size_callback);
+    glfwSetDropCallback(glfw_window, window_drop_callback);
 
     if (instance_count == 0) {
         if (glewInit() != GLEW_OK) {
@@ -101,11 +113,12 @@ Window::Window(int width, int height, const std::string& title) {
     glDebugMessageCallback(gl_debug_msg_cb, nullptr);
 #endif
 
-    window_size_callback(m_window, m_size.x, m_size.y);
+    window_size_callback(glfw_window, m_size.x, m_size.y);
+    m_handle = glfw_window;
 }
 
 Window::~Window() {
-    glfwDestroyWindow(m_window);
+    glfwDestroyWindow(getGlfwWindow(m_handle));
     instance_count -= 1;
     if (instance_count == 0) {
         glfwTerminate();
@@ -117,11 +130,11 @@ auto Window::getSize() const -> const glm::vec<2, int>& {
 }
 
 auto Window::isOpen() const -> bool {
-    return !glfwWindowShouldClose(m_window);
+    return !glfwWindowShouldClose(getGlfwWindow(m_handle));
 }
 
 void Window::close() {
-    glfwSetWindowShouldClose(m_window, true);
+    glfwSetWindowShouldClose(getGlfwWindow(m_handle), true);
 }
 
 auto Window::nextEvent() -> std::optional<Event> {
@@ -136,20 +149,20 @@ auto Window::nextEvent() -> std::optional<Event> {
 
 auto Window::getMousePosition() const -> glm::vec<2, int> {
     double x, y;
-    glfwGetCursorPos(m_window, &x, &y);
+    glfwGetCursorPos(getGlfwWindow(m_handle), &x, &y);
     return {static_cast<int>(x), static_cast<int>(y)};
 }
 
 auto Window::isKeyPressed(Key key) const -> bool {
-    return glfwGetKey(m_window, keyToGlfw(key));
+    return glfwGetKey(getGlfwWindow(m_handle), keyToGlfw(key));
 }
 
-auto Window::operator&() -> GLFWwindow* {
-    return m_window;
+auto Window::getHandle() -> void* {
+    return m_handle;
 }
 
 void Window::clear(const glm::vec<3, float>& color) {
-    glfwMakeContextCurrent(m_window);
+    glfwMakeContextCurrent(getGlfwWindow(m_handle));
     glClearColor(color.r, color.g, color.b, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -159,7 +172,7 @@ void Window::clear(const glm::vec<3, float>& color) {
 }
 
 auto Window::display() -> unsigned {
-    glfwSwapBuffers(m_window);
+    glfwSwapBuffers(getGlfwWindow(m_handle));
     m_events.clear();
     glfwPollEvents();
 
