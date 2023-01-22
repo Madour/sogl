@@ -4,11 +4,9 @@
 
 #include <sogl/Vertex.hpp>
 
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-
 #include <array>
 #include <tuple>
+#include <type_traits>
 #include <vector>
 
 namespace sogl {

@@ -10,11 +10,11 @@
 #define GLFW_INCLUDE_ES3
 #endif
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 #include <chrono>
 #include <list>
-#include <optional>
 #include <string>
 
 namespace sogl {
