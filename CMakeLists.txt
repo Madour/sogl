@@ -39,10 +39,28 @@ setup_dependency(glm
     URL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip
 )
 
-file(GLOB_RECURSE SRC src/*.cpp)
-file(GLOB_RECURSE INC include/sogl/*.hpp include/sogl/*.tpp)
-
-add_library(sogl STATIC ${SRC} ${INC})
+set(SOGL_SOURCES
+    src/thirdparty/stb_image.h
+    src/thirdparty/stb_image_write.h
+    src/Event.cpp
+    src/Inputs.cpp
+    src/Shader.cpp
+    src/Texture.cpp
+    src/Window.cpp
+)
+set(SOGL_HEADERS
+    include/sogl/Event.hpp
+    include/sogl/Inputs.hpp
+    include/sogl/Shader.hpp
+    include/sogl/Shader.tpp
+    include/sogl/sogl.hpp
+    include/sogl/Texture.hpp
+    include/sogl/Vertex.hpp
+    include/sogl/VertexArray.hpp
+    include/sogl/VertexArray.tpp
+    include/sogl/Window.hpp
+)
+add_library(sogl STATIC ${SOGL_SOURCES} ${SOGL_HEADERS})
 add_library(sogl::sogl ALIAS sogl)
 target_include_directories(sogl PUBLIC include)
 
