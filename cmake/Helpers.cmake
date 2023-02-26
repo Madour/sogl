@@ -1,4 +1,7 @@
 include(FetchContent)
+include(cmake/Policies.cmake)
+
+configure_policies()
 
 function(declare_dependency name)
     set(flags_keywords "")
