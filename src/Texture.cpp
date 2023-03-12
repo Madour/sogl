@@ -24,32 +24,42 @@ Texture::~Texture() {
     glDeleteTextures(1, &m_texture);
 }
 
-auto Texture::load(const std::filesystem::path& file) -> bool {
-    auto* pixels = stbi_load(file.string().c_str(), &m_size.x, &m_size.y, &m_chan_count, 0);
-
-    if (pixels == nullptr)
-        return false;
-
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    auto pixels_format = m_chan_count == 4 ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, pixels_format, GL_UNSIGNED_BYTE, pixels);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(pixels);
-
-    return true;
-}
-
-auto Texture::load(const std::uint8_t* pixels, int width, int height, int channels) -> bool {
-    if (pixels == nullptr)
-        return false;
-
+void Texture::create(int width, int height) {
     m_size.x = width;
     m_size.y = height;
-    m_chan_count = channels;
 
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    auto pixels_format = m_chan_count == 4 ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, pixels_format, GL_UNSIGNED_BYTE, pixels);
+    bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+}
+
+auto Texture::load(const std::filesystem::path& file) -> bool {
+    int width = 0;
+    int height = 0;
+    int chan_count = 0;
+    auto* pixels = stbi_load(file.string().c_str(), &width, &height, &chan_count, 4);
+
+    if (pixels == nullptr)
+        return false;
+
+    create(width, height);
+
+    auto ret = copy(pixels, 0, 0, width, height);
+
+    stbi_image_free(pixels);
+
+    return ret;
+}
+
+auto Texture::copy(const std::uint8_t* pixels, int x, int y, int width, int height) -> bool {
+    if (pixels == nullptr)
+        return false;
+
+    if (m_size.x == 0 && m_size.y == 0) {
+        create(x + width, y + height);
+    }
+
+    bind();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     return true;
@@ -63,6 +73,8 @@ auto Texture::getSize() const -> const glm::vec<2, int>& {
     return m_size;
 }
 
-auto Texture::getChannelsCount() const -> int {
-    return m_chan_count;
+auto Texture::getMaximumSize() -> glm::vec<2, int> {
+    GLint size = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
+    return {size, size};
 }
