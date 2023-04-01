@@ -54,6 +54,7 @@ set(SOGL_SOURCES
     src/thirdparty/stb_image.h
     src/thirdparty/stb_image_write.h
     src/Event.cpp
+    src/Font.cpp
     src/Inputs.cpp
     src/Shader.cpp
     src/Texture.cpp
