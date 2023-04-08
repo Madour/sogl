@@ -24,6 +24,8 @@ namespace sogl {
 
         void setPrimitiveType(sogl::Primitive primitive_type);
 
+        void clear();
+
         void pushTriangle(const std::array<VertexTuple, 3>& vertices);
         void pushQuad(const std::array<VertexTuple, 4>& vertices);
 

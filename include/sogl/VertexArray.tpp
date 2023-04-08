@@ -31,6 +31,14 @@ namespace sogl {
     }
 
     template <typename... AttrTypes>
+    void VertexArray<AttrTypes...>::clear() {
+        m_vertices.clear();
+        m_indices.clear();
+        m_buffer.clear();
+        m_dirty = true;
+    }
+
+    template <typename... AttrTypes>
     template <unsigned I, typename AttribT, typename... AttribTs>
     void VertexArray<AttrTypes...>::enableVertexAttribs(size_t offset) {
         const auto components_nb = sizeof(AttribT) / sizeof(float);
