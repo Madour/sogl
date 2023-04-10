@@ -52,6 +52,14 @@ namespace sogl {
     }
 
     template <typename... AttrTypes>
+    void VertexArray<AttrTypes...>::push(const VertexTuple& v) {
+        m_indices.push_back(m_vertices.size());
+        m_vertices.push_back(v);
+
+        m_dirty = true;
+    }
+
+    template <typename... AttrTypes>
     void VertexArray<AttrTypes...>::pushTriangle(const std::array<VertexTuple, 3>& vertices) {
         auto index_offset = m_vertices.size();
 
