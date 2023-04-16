@@ -155,7 +155,7 @@ void Font::shape(void* buffer, int size, std::vector<Glyph::Shape>& glyphs) {
     for (unsigned int i = 0; i < len; ++i) {
         auto& this_info = info[i];
         auto& this_pos = pos[i];
-        auto& glyph = getGlyph(this_info.codepoint, m_last_size);
+        auto& glyph = getGlyph(this_info.codepoint, size);
 
         double pos_x = curr_x + this_pos.x_offset / 64. + glyph.bearing.x;
         double pos_y = this_pos.y_offset / 64. - glyph.bearing.y;
@@ -182,6 +182,7 @@ void Font::setPixelSize(int size) {
     if (size != m_last_size)
     {
         FT_Set_Pixel_Sizes(static_cast<FT_Face>(m_face), size, size);
+        hb_ft_font_changed(static_cast<hb_font_t*>(m_font));
         m_last_size = size;
     }
 }
