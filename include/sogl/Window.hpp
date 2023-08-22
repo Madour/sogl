@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 
 #include <chrono>
-#include <list>
+#include <queue>
 #include <string>
 
 namespace sogl {
@@ -38,7 +38,7 @@ namespace sogl {
     private:
         void* m_handle = nullptr;
         glm::vec<2, int> m_size;
-        std::list<Event> m_events;
+        std::queue<Event> m_events;
         std::chrono::time_point<std::chrono::high_resolution_clock> m_frame_time;
     };
 

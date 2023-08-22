@@ -56,34 +56,34 @@ Window::Window(int width, int height, const std::string& title) {
 
     auto key_callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS)
-            self->m_events.push_back(Event(Event::KeyPress{}, {key, scancode, action, mods}));
+            self->m_events.push(Event(Event::KeyPress{}, {key, scancode, action, mods}));
         else if (action == GLFW_RELEASE)
-            self->m_events.push_back(Event(Event::KeyRelease{}, {key, scancode, action, mods}));
+            self->m_events.push(Event(Event::KeyRelease{}, {key, scancode, action, mods}));
     };
 
     auto mouse_button_callback = [](GLFWwindow* window, int button, int action, int mods) {
         if (action == GLFW_PRESS)
-            self->m_events.push_back(Event(Event::MousePress{}, {button, action, mods}));
+            self->m_events.push(Event(Event::MousePress{}, {button, action, mods}));
         else if (action == GLFW_RELEASE)
-            self->m_events.push_back(Event(Event::MouseRelease{}, {button, action, mods}));
+            self->m_events.push(Event(Event::MouseRelease{}, {button, action, mods}));
     };
 
     auto mouse_move_callback = [](GLFWwindow* window, double x, double y) {
-        self->m_events.push_back(Event(Event::MouseMove{}, {static_cast<int>(x), static_cast<int>(y)}));
+        self->m_events.push(Event(Event::MouseMove{}, {static_cast<int>(x), static_cast<int>(y)}));
     };
 
     auto mouse_wheel_callback = [](GLFWwindow* window, double x, double y) {
-        self->m_events.push_back(Event(Event::Scroll{}, {static_cast<int>(x), static_cast<int>(y)}));
+        self->m_events.push(Event(Event::Scroll{}, {static_cast<int>(x), static_cast<int>(y)}));
     };
 
     auto window_size_callback = [](GLFWwindow* window, int width, int height) {
-        self->m_events.push_back(Event(Event::Resize{}, {width, height}));
+        self->m_events.push(Event(Event::Resize{}, {width, height}));
         self->m_size = {width, height};
         glViewport(0, 0, width, height);
     };
 
     auto window_drop_callback = [](GLFWwindow* window, int count, const char** paths) {
-         self->m_events.push_back(Event(Event::Drop{}, {count}, paths));
+         self->m_events.push(Event(Event::Drop{}, {count}, paths));
     };
 
     glfwSetKeyCallback(glfw_window, key_callback);
@@ -141,8 +141,8 @@ auto Window::nextEvent() -> std::optional<Event> {
     if (m_events.empty()) {
         return std::nullopt;
     } else {
-        auto ev = std::optional(m_events.back());
-        m_events.pop_back();
+        auto ev = std::optional(m_events.front());
+        m_events.pop();
         return ev;
     }
 }
@@ -173,7 +173,7 @@ void Window::clear(const glm::vec<3, float>& color) {
 
 auto Window::display() -> unsigned {
     glfwSwapBuffers(getGlfwWindow(m_handle));
-    m_events.clear();
+    while (!m_events.empty()) m_events.pop();
     glfwPollEvents();
 
     auto now = std::chrono::high_resolution_clock::now();
