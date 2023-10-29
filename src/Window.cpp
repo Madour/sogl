@@ -35,16 +35,18 @@ namespace {
 
 int Window::instance_count = 0;
 
-Window::Window(int width, int height, const std::string& title) {
+Window::Window(int width, int height, const std::string& title, Options options) {
     if (instance_count == 0) {
         glfwSetErrorCallback(error_callback);
         glfwInit();
     }
+    glfwWindowHint(GLFW_SAMPLES, options.multisampling);
+
     m_frame_time = std::chrono::high_resolution_clock::now();
     m_size = {width, height};
     auto* glfw_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(glfw_window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(options.v_sync);
 #if !defined(EMSCRIPTEN)
     glfwSetInputMode(glfw_window, GLFW_LOCK_KEY_MODS, true);
 #endif

@@ -17,7 +17,12 @@ namespace sogl {
         static int instance_count;
 
     public:
-        Window(int width, int height, const std::string& title);
+        struct Options {
+            unsigned multisampling = 0;
+            bool v_sync = false;
+        };
+
+        Window(int width, int height, const std::string& title, Options options = {});
         ~Window();
 
         [[nodiscard]] auto getSize() const -> const glm::vec<2, int>&;
