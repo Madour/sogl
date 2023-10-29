@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
 
 #include <filesystem>
 
@@ -24,6 +24,8 @@ namespace sogl {
         auto copy(const std::uint8_t* pixels, int x, int y, int width, int height) -> bool;
 
         void bind() const;
+
+        static void unbind();
 
         [[nodiscard]] auto getSize() const -> const glm::vec<2, int>&;
 
