@@ -69,6 +69,10 @@ void Texture::bind() const {
     glBindTexture(GL_TEXTURE_2D, m_texture);
 }
 
+void Texture::unbind() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 auto Texture::getSize() const -> const glm::vec<2, int>& {
     return m_size;
 }
