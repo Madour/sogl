@@ -165,6 +165,7 @@ auto Window::getHandle() -> void* {
 
 void Window::clear(const glm::vec<3, float>& color) {
     glfwMakeContextCurrent(getGlfwWindow(m_handle));
+    glViewport(0, 0, m_size.x, m_size.y);
     glClearColor(color.r, color.g, color.b, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBindTexture(GL_TEXTURE_2D, 0);
