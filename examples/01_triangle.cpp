@@ -4,7 +4,9 @@
 
 int main() {
     // create a window
-    auto window = sogl::Window(1000, 800, "Triangle demo");
+    auto options = sogl::Window::Options();
+    options.v_sync = true;
+    auto window = sogl::Window(1000, 800, "Triangle demo", options);
 
     // create a vertex array and push a triangle
     // vertex data is : vec2 position, vec4 color

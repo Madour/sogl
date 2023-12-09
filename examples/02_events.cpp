@@ -48,7 +48,9 @@ void processEvent(const sogl::Event& event) {
 
 int main() {
     // create a window
-    auto window = sogl::Window(960, 540, "Events demo");
+    auto options = sogl::Window::Options();
+    options.v_sync = true;
+    auto window = sogl::Window(960, 540, "Events demo", options);
 
     auto update_fn = [&]() {
         while (auto event = window.nextEvent()) {

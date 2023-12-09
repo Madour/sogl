@@ -34,7 +34,9 @@ private:
 
 int main() {
     // create a window
-    auto window = sogl::Window(800, 600, "3D camera demo");
+    auto options = sogl::Window::Options();
+    options.v_sync = true;
+    auto window = sogl::Window(800, 600, "3D camera demo", options);
     // and hide the cursor
     glfwSetInputMode(static_cast<GLFWwindow*>(window.getHandle()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
