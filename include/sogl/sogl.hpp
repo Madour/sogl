@@ -4,6 +4,8 @@
 
 #include <sogl/Event.hpp>
 #include <sogl/Font.hpp>
+#include <sogl/FrameBuffer.hpp>
+#include <sogl/PostProcess.hpp>
 #include <sogl/Shader.hpp>
 #include <sogl/Texture.hpp>
 #include <sogl/VertexArray.hpp>

@@ -55,7 +55,9 @@ set(SOGL_SOURCES
     src/thirdparty/stb_image_write.h
     src/Event.cpp
     src/Font.cpp
+    src/Framebuffer.cpp
     src/Inputs.cpp
+    src/PostProcess.cpp
     src/Shader.cpp
     src/Texture.cpp
     src/Window.cpp
@@ -63,7 +65,9 @@ set(SOGL_SOURCES
 set(SOGL_HEADERS
     include/sogl/Event.hpp
     include/sogl/Font.hpp
+    include/sogl/Framebuffer.hpp
     include/sogl/Inputs.hpp
+    include/sogl/PostProcess.hpp
     include/sogl/Shader.hpp
     include/sogl/Shader.tpp
     include/sogl/sogl.hpp
