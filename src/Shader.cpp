@@ -29,50 +29,39 @@ namespace {
     }
 }
 
-Shader::~Shader() {
-    unload();
+template <>
+Shader::ShaderObject<Shader::Type::Vertex>::ShaderObject() {
+    handle.shader = glCreateShader(GL_VERTEX_SHADER);
+}
+template <>
+void Shader::ShaderObject<Shader::Type::Vertex>::destroy() {
+    if (handle) glDeleteShader(handle.shader);
 }
 
-auto Shader::load(const char* vert_src, const char* frag_src) -> bool {
-    if (!compile(Type::Vertex, vert_src))
-        return false;
+template <>
+Shader::ShaderObject<Shader::Type::Geometry>::ShaderObject() {
+    handle.shader = glCreateShader(GL_GEOMETRY_SHADER);
+}
+template <>
+void Shader::ShaderObject<Shader::Type::Geometry>::destroy() {
+    if (handle) glDeleteShader(handle.shader);
+}
 
-    if (!compile(Type::Fragment, frag_src))
-        return false;
+template <>
+Shader::ShaderObject<Shader::Type::Fragment>::ShaderObject() {
+    handle.shader = glCreateShader(GL_FRAGMENT_SHADER);
+}
+template <>
+void Shader::ShaderObject<Shader::Type::Fragment>::destroy() {
+    if (handle) glDeleteShader(handle.shader);
+}
 
+Shader::Shader() {
     m_program = glCreateProgram();
+}
 
-    for (const auto& [_, shader] : m_shaders)
-        glAttachShader(m_program, shader);
-
-    glLinkProgram(m_program);
-    glValidateProgram(m_program);
-
-    int link_status;
-    glGetProgramiv(m_program, GL_LINK_STATUS, &link_status);
-    if (link_status == GL_FALSE) {
-        std::cerr << "Failed to link shader program :\n"
-                  << get_program_info_log(m_program) << std::endl;
-        unload();
-        return false;
-    }
-
-    int validate_status;
-    glGetProgramiv(m_program, GL_VALIDATE_STATUS, &validate_status);
-    if (validate_status == GL_FALSE) {
-        std::cerr << "Failed to validate shader program :\n"
-                  << get_program_info_log(m_program) << std::endl;
-        unload();
-        return false;
-    }
-
-    for (const auto& [_, shader] : m_shaders) {
-        glDetachShader(m_program, shader);
-        glDeleteShader(shader);
-    }
-    m_shaders.clear();
-
-    return true;
+Shader::~Shader() {
+    if (m_program) glDeleteProgram(m_program);
 }
 
 void Shader::bind() const {
@@ -85,29 +74,84 @@ auto Shader::getUniformLocation(const std::string& uniform) const -> int {
     return m_uniforms_location.at(uniform);
 }
 
-auto Shader::compile(Type type, const char* src) -> bool {
-    auto shader = glCreateShader(static_cast<unsigned>(type));
-    glShaderSource(shader, 1, &src, nullptr);
+auto Shader::compileVertex(const std::string& src) -> ShaderObject<Type::Vertex> {
+    ShaderObject<Type::Vertex> shader_obj;
+    if (compile(Type::Vertex, src, shader_obj.handle))
+        return shader_obj;
+    else
+        return ShaderObject<Type::Vertex>(nullptr);
+}
+
+auto Shader::compileGeometry(const std::string& src) -> ShaderObject<Type::Geometry> {
+    ShaderObject<Type::Geometry> shader_obj;
+    if (compile(Type::Geometry, src, shader_obj.handle))
+        return shader_obj;
+    else
+        return ShaderObject<Type::Geometry>(nullptr);
+}
+
+auto Shader::compileFragment(const std::string& src) -> ShaderObject<Type::Fragment> {
+    ShaderObject<Type::Fragment> shader_obj;
+    if (compile(Type::Fragment, src, shader_obj.handle))
+        return shader_obj;
+    else
+        return ShaderObject<Type::Fragment>(nullptr);
+}
+
+auto Shader::compile(Type type, const std::string& src, ShaderHandle& handle) -> bool {
+    auto& shader = handle.shader;
+    auto* src_c = src.c_str();
+    glShaderSource(shader, 1, &src_c, nullptr);
     glCompileShader(shader);
 
     int status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+
+    auto to_string = [] (const Shader::Type& t) -> std::string {
+        switch (t) {
+            case Shader::Type::Vertex: return "Vertex";
+            case Shader::Type::Fragment: return "Fragment";
+            case Shader::Type::Geometry: return "Geometry";
+            default: return "Unknown";
+        }
+    };
+
     if (status == GL_FALSE) {
-        std::cerr << "Failed to compile "
-                  << (type == Type::Vertex ? "vertex" : "fragment")
-                  << " shader :\n" << get_shader_info_log(shader) << std::endl;
-        glDeleteShader(shader);
+        std::cerr << "Failed to compile " << to_string(type) << " shader :\n"
+                  << get_shader_info_log(shader) << std::endl;
         return false;
     }
-    m_shaders[type] = shader;
+
     return true;
 }
 
-void Shader::unload() {
-    for (const auto& [_, shader] : m_shaders) {
-        if (shader) glDeleteShader(shader);
+void Shader::attach(ShaderHandle& handle) {
+    glAttachShader(m_program, handle.shader);
+}
+
+void Shader::detach(ShaderHandle& handle) {
+    glDetachShader(m_program, handle.shader);
+}
+
+auto Shader::linkAndValidate() -> bool {
+    glLinkProgram(m_program);
+    glValidateProgram(m_program);
+
+    int link_status;
+    glGetProgramiv(m_program, GL_LINK_STATUS, &link_status);
+    if (link_status == GL_FALSE) {
+        std::cerr << "Failed to link shader program :\n"
+                  << get_program_info_log(m_program) << std::endl;
+        return false;
     }
-    if (m_program) glDeleteProgram(m_program);
-    m_shaders.clear();
-    m_uniforms_location.clear();
+
+    int validate_status;
+    glGetProgramiv(m_program, GL_VALIDATE_STATUS, &validate_status);
+    if (validate_status == GL_FALSE) {
+        std::cerr << "Failed to validate shader program :\n"
+                  << get_program_info_log(m_program) << std::endl;
+        return false;
+    }
+
+    return true;
 }

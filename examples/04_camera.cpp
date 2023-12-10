@@ -131,9 +131,17 @@ int main() {
              fragColor = col;
          }
     );
-    // create a shader program and load it from the source strings
+    // compile shaders from source string
+    auto vert_shader = sogl::Shader::compileVertex(vert_src);
+    auto frag_shader = sogl::Shader::compileFragment(frag_src);
+
+    // create a shader program and load it from the compiled shaders
     auto shader = sogl::Shader();
-    shader.load(vert_src, frag_src);
+    shader.load(vert_shader, frag_shader);
+
+    // once the shader program is loaded, we can destroy the compiled shaders
+    vert_shader.destroy();
+    frag_shader.destroy();
 
     Camera cam{};
     cam.pos = {10, 10, 2};
@@ -209,7 +217,7 @@ int main() {
             cam.dir = glm::normalize(direction);
         }
 
-        cube_rotation += dt * 180.f;
+        cube_rotation += dt * 90.f;
     };
 
     auto render_fn = [&]() {
