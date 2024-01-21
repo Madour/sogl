@@ -21,13 +21,21 @@ namespace sogl {
 
         glGenBuffers(1, &m_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
         enableVertexAttribs<0, AttrTypes...>();
 
         glGenBuffers(1, &m_ibo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    }
+
+    template <typename... AttrTypes>
+    void VertexArray<AttrTypes...>::clear() {
+        m_vertices.clear();
+        m_indices.clear();
+        m_buffer.clear();
+        m_dirty = true;
     }
 
     template <typename... AttrTypes>
@@ -41,6 +49,14 @@ namespace sogl {
         if constexpr (I < sizeof...(AttrTypes) - 1) {
             enableVertexAttribs<I + 1, AttribTs...>(offset + sizeof(AttribT));
         }
+    }
+
+    template <typename... AttrTypes>
+    void VertexArray<AttrTypes...>::push(const VertexTuple& v) {
+        m_indices.push_back(m_vertices.size());
+        m_vertices.push_back(v);
+
+        m_dirty = true;
     }
 
     template <typename... AttrTypes>
@@ -88,12 +104,12 @@ namespace sogl {
 
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
             glBufferData(GL_ARRAY_BUFFER, m_buffer.size() * sizeof(typename decltype(m_buffer)::value_type),
-                         m_buffer.data(), GL_STATIC_DRAW);
+                         m_buffer.data(), GL_DYNAMIC_DRAW);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(typename decltype(m_indices)::value_type),
-                         const_cast<unsigned*>(m_indices.data()), GL_STATIC_DRAW);
+                         const_cast<unsigned*>(m_indices.data()), GL_DYNAMIC_DRAW);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             m_dirty = false;

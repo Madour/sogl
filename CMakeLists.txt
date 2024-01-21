@@ -38,19 +38,36 @@ endif()
 setup_dependency(glm
     URL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip
 )
+setup_dependency(freetype
+    URL https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.xz
+    OPTIONS
+        FT_DISABLE_HARFBUZZ ON
+)
+setup_dependency(harfbuzz
+    URL https://github.com/harfbuzz/harfbuzz/releases/download/7.1.0/harfbuzz-7.1.0.tar.xz
+    OPTIONS
+        HB_BUILD_SUBSET OFF
+        HB_HAVE_INTROSPECTION OFF
+)
 
 set(SOGL_SOURCES
     src/thirdparty/stb_image.h
     src/thirdparty/stb_image_write.h
     src/Event.cpp
+    src/Font.cpp
+    src/Framebuffer.cpp
     src/Inputs.cpp
+    src/PostProcess.cpp
     src/Shader.cpp
     src/Texture.cpp
     src/Window.cpp
 )
 set(SOGL_HEADERS
     include/sogl/Event.hpp
+    include/sogl/Font.hpp
+    include/sogl/Framebuffer.hpp
     include/sogl/Inputs.hpp
+    include/sogl/PostProcess.hpp
     include/sogl/Shader.hpp
     include/sogl/Shader.tpp
     include/sogl/sogl.hpp
@@ -66,7 +83,7 @@ target_include_directories(sogl PUBLIC include)
 
 target_link_libraries(sogl PUBLIC glm::glm)
 if(SOGL_DESKTOP)
-    target_link_libraries(sogl PUBLIC libglew_static glfw)
+    target_link_libraries(sogl PUBLIC libglew_static glfw freetype harfbuzz)
 endif()
 
 set_target_properties(sogl PROPERTIES DEBUG_POSTFIX -d)

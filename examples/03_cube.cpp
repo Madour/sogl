@@ -7,7 +7,9 @@
 
 int main() {
     // create a window
-    auto window = sogl::Window(800, 600, "Rotating cube demo");
+    auto options = sogl::Window::Options();
+    options.v_sync = true;
+    auto window = sogl::Window(800, 600, "Rotating cube demo", options);
 
     const auto red = glm::vec4(1.f, 0.f, 0.f, 1.f);
     const auto green = glm::vec4(0.f, 1.f, 0.f, 1.f);
@@ -101,9 +103,17 @@ int main() {
              fragColor = col;
          }
     );
-    // create a shader program and load it from the source strings
+    // compile shaders from source string
+    auto vert_shader = sogl::Shader::compileVertex(vert_src);
+    auto frag_shader = sogl::Shader::compileFragment(frag_src);
+
+    // create a shader program and load it from the compiled shaders
     auto shader = sogl::Shader();
-    shader.load(vert_src, frag_src);
+    shader.load(vert_shader, frag_shader);
+
+    // once the shader program is loaded, we can destroy the compiled shaders
+    vert_shader.destroy();
+    frag_shader.destroy();
 
     auto view_size = glm::vec2(window.getSize());
 

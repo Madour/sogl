@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 
 #include <chrono>
-#include <list>
+#include <queue>
 #include <string>
 
 namespace sogl {
@@ -17,7 +17,12 @@ namespace sogl {
         static int instance_count;
 
     public:
-        Window(int width, int height, const std::string& title);
+        struct Options {
+            unsigned multisampling = 0;
+            bool v_sync = false;
+        };
+
+        Window(int width, int height, const std::string& title, Options options = {});
         ~Window();
 
         [[nodiscard]] auto getSize() const -> const glm::vec<2, int>&;
@@ -38,7 +43,7 @@ namespace sogl {
     private:
         void* m_handle = nullptr;
         glm::vec<2, int> m_size;
-        std::list<Event> m_events;
+        std::queue<Event> m_events;
         std::chrono::time_point<std::chrono::high_resolution_clock> m_frame_time;
     };
 

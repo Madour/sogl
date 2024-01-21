@@ -1,7 +1,7 @@
 // Created by Modar Nasser on 28/02/2022.
 
 template <typename T>
-void Shader::setUniform(const std::string& uniform, const T& val) {
+void Shader::setUniform(const std::string& uniform, const T& val) const {
     auto location = getUniformLocation(uniform);
     if constexpr(std::is_same_v<T, float>) {
         glUniform1f(location, val);
@@ -55,7 +55,7 @@ void Shader::setUniform(const std::string& uniform, const T& val) {
 }
 
 template <typename T>
-void Shader::setUniform(const std::string& uniform, const std::initializer_list<T>& arr) {
+void Shader::setUniform(const std::string& uniform, const std::initializer_list<T>& arr) const {
     auto location = getUniformLocation(uniform);
     if constexpr(std::is_same_v<T, float>) {
         glUniform1fv(location, std::size(arr), std::data(arr));

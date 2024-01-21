@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
 
 #include <filesystem>
 
@@ -17,18 +17,23 @@ namespace sogl {
         Texture& operator=(const Texture&) = delete;
         Texture& operator=(const Texture&&) = delete;
 
+        void create(int width, int height);
+
         auto load(const std::filesystem::path& file) -> bool;
-        auto load(const std::uint8_t* pixels, int width, int height, int channels) -> bool;
+
+        auto copy(const std::uint8_t* pixels, int x, int y, int width, int height) -> bool;
 
         void bind() const;
 
+        static void unbind();
+
         [[nodiscard]] auto getSize() const -> const glm::vec<2, int>&;
-        [[nodiscard]] auto getChannelsCount() const -> int;
+
+        [[nodiscard]] static auto getMaximumSize() -> glm::vec<2, int>;
 
     private:
         unsigned m_texture = 0;
         glm::vec<2, int> m_size = {0, 0};
-        int m_chan_count = 0;
     };
 
 }
