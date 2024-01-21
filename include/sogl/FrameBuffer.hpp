@@ -9,13 +9,14 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
+#include <map>
+
 
 namespace sogl {
 
     class FrameBuffer {
     public:
         FrameBuffer();
-        FrameBuffer(const PostProcess& post_process);
         ~FrameBuffer();
         FrameBuffer(const FrameBuffer&) = delete;
         FrameBuffer(FrameBuffer&&) = delete;
@@ -24,10 +25,12 @@ namespace sogl {
 
         void create(int width, int height);
 
-        void clear(const glm::vec4& color = {0, 0, 0, 1});
+        void clear(const glm::vec4& color = {0, 0, 0, 0});
         void display();
 
-        void render();
+        void render() const;
+        void render(const PostProcess& post_process,
+                    const std::map<std::string, float>& uniforms = {}) const;
 
     private:
         unsigned m_framebuffer = 0;
