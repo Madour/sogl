@@ -2,9 +2,12 @@
 
 #pragma once
 
+#include <sogl/GlObject.hpp>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include <concepts>
 #include <string>
 #include <unordered_map>
 
@@ -25,44 +28,48 @@ namespace sogl {
         };
 
     private:
-        struct ShaderHandle {
-            unsigned shader = 0;
-            operator bool() const { return shader != 0; }
+        class ShaderObject : public GlObject {
+        public:
+            operator bool() const { return handle != 0; }
         };
 
         template <Type T>
-        class ShaderObject {
-            friend Shader;
+        class CompiledShaderObject : public ShaderObject {
         public:
+            CompiledShaderObject(const std::string& src);
             void destroy();
+        };
 
-            operator bool() const { return handle; }
-
-        private:
-            ShaderObject();
-            ShaderObject(void*) {}; // dummy ctor for creating an empty ShaderObject
-            ShaderObject(const ShaderObject&) = delete;
-            ShaderObject(ShaderObject&&) = default;
-            ShaderObject& operator=(const ShaderObject&) = delete;
-            ShaderObject& operator=(ShaderObject&&) = default;
-
-            ShaderHandle handle;
+        class Program : public GlObject {
+        public:
+            void create();
+            void destroy();
+            void attachShader(const ShaderObject& shader_handle);
+            void detachShader(const ShaderObject& shader_handle);
+            void link() const;
+            void validate() const;
+            auto getInfoLog() const -> std::string;
+            void use() const;
+            auto getUniformLocation(const std::string& uniform) const -> int;
+            auto getStatus(unsigned status_type) const -> int;
+            operator bool();
         };
 
     public:
-        Shader();
+        Shader() = default;
         ~Shader();
         Shader(const Shader&) = delete;
-        Shader(Shader&&) = delete;
+        Shader(Shader&&) = default;
         Shader& operator=(const Shader&) = delete;
-        Shader& operator=(Shader&&) = delete;
+        Shader& operator=(Shader&&) = default;
 
-        static auto compileVertex(const std::string& src) -> ShaderObject<Type::Vertex>;
-        static auto compileGeometry(const std::string& src) -> ShaderObject<Type::Geometry>;
-        static auto compileFragment(const std::string& src) -> ShaderObject<Type::Fragment>;
+        static auto compileVertex(const std::string& src) -> CompiledShaderObject<Type::Vertex>;
+        static auto compileGeometry(const std::string& src) -> CompiledShaderObject<Type::Geometry>;
+        static auto compileFragment(const std::string& src) -> CompiledShaderObject<Type::Fragment>;
 
         template <typename... TShaderObjects>
         auto load(TShaderObjects&... shader_objects) -> bool {
+            m_program.create();
             attach_r(shader_objects...);
             auto ret = linkAndValidate();
             detach_r(shader_objects...);
@@ -75,37 +82,35 @@ namespace sogl {
         auto getUniformLocation(const std::string& uniform) const -> int;
 
         template <typename T>
-        void setUniform(const std::string& uniform, const T& val);
+        void setUniform(const std::string& uniform, const T& val) const;
 
         template <typename T>
-        void setUniform(const std::string& uniform, const std::initializer_list<T>& arr);
+        void setUniform(const std::string& uniform, const std::initializer_list<T>& arr) const;
 
     private:
-        static auto compile(Type type, const std::string& src, ShaderHandle& handle) -> bool;
-
-        template <typename TShaderObject, typename... TShaderObjects>
+        template <typename TShaderObject, typename... TShaderObjects> requires std::derived_from<TShaderObject, ShaderObject>
         void attach_r(TShaderObject& shader_object, TShaderObjects&... shader_objects) {
-            attach(shader_object.handle);
+            attach(shader_object);
 
             if constexpr(sizeof...(shader_objects) > 0) {
                 attach_r(shader_objects...);
             }
         }
 
-        template <typename TShaderObject, typename... TShaderObjects>
+        template <typename TShaderObject, typename... TShaderObjects>requires std::derived_from<TShaderObject, ShaderObject>
         void detach_r(TShaderObject& shader_object, TShaderObjects&... shader_objects) {
-            detach(shader_object.handle);
+            detach(shader_object);
 
             if constexpr(sizeof...(shader_objects) > 0) {
                 detach_r(shader_objects...);
             }
         }
 
-        void attach(ShaderHandle& handle);
-        void detach(ShaderHandle& handle);
+        void attach(const ShaderObject& handle);
+        void detach(const ShaderObject& handle);
         auto linkAndValidate() -> bool;
 
-        unsigned m_program =  0;
+        Program m_program;
         mutable std::unordered_map<std::string, int> m_uniforms_location;
     };
 
