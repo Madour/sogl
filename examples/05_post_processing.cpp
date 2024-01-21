@@ -54,6 +54,7 @@ int main() {
     vert_shader.destroy();
     frag_shader.destroy();
 
+    // let's create some post processing effects
     auto waves_post_process = sogl::PostProcess(GLSL(330 core,
         // uniforms are provided by the framebuffer
         uniform sampler2D texture0;
@@ -115,31 +116,26 @@ int main() {
         }
     ));
 
-    auto default_fb = sogl::FrameBuffer();
-    default_fb.create(window.getSize().x, window.getSize().y);
+    // create the framebuffer that will render the scene and apply the post processing effect
+    auto framebuffer = sogl::FrameBuffer();
+    framebuffer.create(window.getSize().x, window.getSize().y);
 
-    auto waves_fb = sogl::FrameBuffer(waves_post_process);
-    waves_fb.create(window.getSize().x, window.getSize().y);
-
-    auto wiggle_fb = sogl::FrameBuffer(wiggle_post_process);
-    wiggle_fb.create(window.getSize().x, window.getSize().y);
-
-    auto blur_fb = sogl::FrameBuffer(blur_post_process);
-    blur_fb.create(window.getSize().x, window.getSize().y);
-
-    sogl::FrameBuffer* current_fb = &waves_fb;
+    const sogl::PostProcess* current_post_process = &waves_post_process;
 
     auto update_fn = [&]() {
         while (auto event = window.nextEvent()) {
             if (auto key_press = event->as<sogl::Event::KeyPress>()) {
-                if (key_press->key == sogl::Key::Space) {
+                if (key_press->key == sogl::Key::Escape) {
+                    window.close();
+                }
+                else {
                     static size_t i = 1;
                     i = (i + 1) % 4;
                     switch (i) {
-                        case 0: current_fb = &default_fb; break;
-                        case 1: current_fb = &waves_fb; break;
-                        case 2: current_fb = &wiggle_fb; break;
-                        case 3: current_fb = &blur_fb; break;
+                        case 0: current_post_process = &sogl::PostProcess::getDefault(); break;
+                        case 1: current_post_process = &waves_post_process; break;
+                        case 2: current_post_process = &wiggle_post_process; break;
+                        case 3: current_post_process = &blur_post_process; break;
                     }
                 }
             }
@@ -148,15 +144,15 @@ int main() {
 
     auto render_fn = [&]() {
         // render the scene to the framebuffer first
-        current_fb->clear();
+        framebuffer.clear();
         shader.bind();
         vertex_array.bind();
         vertex_array.render();
-        current_fb->display();
+        framebuffer.display();
 
         // then render the framebuffer to the window
         window.clear();
-        current_fb->render();
+        framebuffer.render(*current_post_process);
         window.display();
     };
 

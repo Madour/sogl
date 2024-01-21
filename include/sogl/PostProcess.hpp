@@ -2,16 +2,25 @@
 
 #pragma once
 
+#include <sogl/Shader.hpp>
+
 #include <string>
 
 namespace sogl {
 
     class PostProcess {
         friend class FrameBuffer;
+
     public:
-        PostProcess(std::string fragment_shader_src);
+        PostProcess(const std::string& post_process_shader_src);
+
+        static auto getDefault() -> const PostProcess&;
+
     private:
-        std::string fragment_src;
+        PostProcess() = default;
+        void set(const std::string& post_process_shader_src);
+
+        Shader shader;
     };
 
 } // namespace sogl
