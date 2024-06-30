@@ -12,11 +12,11 @@
 namespace sogl {
     namespace detail {
         struct any_type {
-            template <class T>
+            template <typename T>
             constexpr operator T(); // non explicit
         };
 
-        template<class T, typename... Args >
+        template <typename T, typename... Args >
         inline constexpr bool is_brace_constructible_v = requires { T{std::declval<Args>()...}; };
     }
 
@@ -35,7 +35,7 @@ namespace sogl {
         Patches = GL_PATCHES,
     };
 
-    template<class T>
+    template <typename T>
     auto vertex(T&& object) noexcept {
         using type = std::decay_t<T>;
         using any = detail::any_type;
@@ -60,5 +60,10 @@ namespace sogl {
         } else {
             return std::make_tuple();
         }
+    }
+
+    template <typename... Types>
+    auto vertex(Types... types) noexcept {
+        return std::make_tuple(types...);
     }
 }
