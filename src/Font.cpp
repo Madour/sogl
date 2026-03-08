@@ -62,7 +62,12 @@ void Font::shapeText(const char8_t* string, int size, std::vector<Glyph::Shape>&
 
 void Font::shapeText(const std::wstring& string, int size, std::vector<Glyph::Shape>& glyphs) {
     hb_buffer_t* hb_buffer = hb_buffer_create();
-    hb_buffer_add_utf16(hb_buffer, reinterpret_cast<const uint16_t*>(string.data()), -1, 0, -1);
+    if constexpr (sizeof(wchar_t) == 2) {
+        hb_buffer_add_utf16(hb_buffer, reinterpret_cast<const uint16_t*>(string.data()), -1, 0, -1);
+    }
+    else if constexpr (sizeof(wchar_t) == 4) {
+        hb_buffer_add_utf32(hb_buffer, reinterpret_cast<const uint32_t*>(string.data()), -1, 0, -1);
+    }
     hb_buffer_guess_segment_properties(hb_buffer);
 
     shape(hb_buffer, size, glyphs);
