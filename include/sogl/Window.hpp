@@ -18,11 +18,12 @@ namespace sogl {
 
     public:
         struct Options {
-            unsigned multisampling = 0;
+            int multisampling = 0;
             bool v_sync = false;
         };
 
-        Window(int width, int height, const std::string& title, Options options = {});
+        Window(int width, int height, const std::string& title);
+        Window(int width, int height, const std::string& title, const Options& options);
         ~Window();
 
         [[nodiscard]] auto getSize() const -> const glm::vec<2, int>&;
