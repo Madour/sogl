@@ -35,7 +35,10 @@ namespace {
 
 int Window::instance_count = 0;
 
-Window::Window(int width, int height, const std::string& title, Options options) {
+Window::Window(int width, int height, const std::string& title): Window(width, height, title, {})
+{}
+
+Window::Window(int width, int height, const std::string& title, const Options& options) {
     if (instance_count == 0) {
         glfwSetErrorCallback(error_callback);
         glfwInit();
