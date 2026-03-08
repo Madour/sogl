@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.26)
+
+include(cmake/Policies.cmake)
+configure_policies()
 
 project(
     sogl
@@ -16,17 +19,19 @@ else()
     set(SOGL_DESKTOP TRUE)
 endif()
 
+set(BUILD_SHARED_LIBS OFF)
+
 message(STATUS "[sogl] Configuring dependencies")
 if (SOGL_DESKTOP)
-    setup_dependency(glew
-        URL https://github.com/Perlmint/glew-cmake/archive/refs/tags/glew-cmake-2.2.0.zip
+    setup_dependency(glew VERSION 2.3.1
+        URL https://github.com/Perlmint/glew-cmake/archive/refs/tags/glew-cmake-2.3.1.zip
         OPTIONS
             glew-cmake_BUILD_SHARED OFF
             glew-cmake_BUILD_STATIC ON
             PKG_CONFIG_REPRESENTATIVE_TARGET OFF
             ONLY_LIBS ON
     )
-    setup_dependency(glfw
+    setup_dependency(glfw VERSION 3.3.8
         URL https://github.com/glfw/glfw/releases/download/3.3.8/glfw-3.3.8.zip
         OPTIONS
             GLFW_BUILD_EXAMPLES OFF
@@ -35,16 +40,16 @@ if (SOGL_DESKTOP)
             GLFW_INSTALL OFF
     )
 endif()
-setup_dependency(glm
-    URL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip
+setup_dependency(glm VERSION 1.0.3
+    URL https://github.com/g-truc/glm/releases/download/1.0.3/glm-1.0.3.zip
 )
-setup_dependency(freetype
-    URL https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.xz
+setup_dependency(freetype VERSION 2.14.1
+    URL https://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.14.1.tar.xz
     OPTIONS
         FT_DISABLE_HARFBUZZ ON
 )
-setup_dependency(harfbuzz
-    URL https://github.com/harfbuzz/harfbuzz/releases/download/7.1.0/harfbuzz-7.1.0.tar.xz
+setup_dependency(harfbuzz VERSION 12.3.2
+    URL https://github.com/harfbuzz/harfbuzz/releases/download/12.3.2/harfbuzz-12.3.2.tar.xz
     OPTIONS
         HB_BUILD_SUBSET OFF
         HB_HAVE_INTROSPECTION OFF
@@ -81,15 +86,17 @@ add_library(sogl STATIC ${SOGL_SOURCES} ${SOGL_HEADERS})
 add_library(sogl::sogl ALIAS sogl)
 target_include_directories(sogl PUBLIC include)
 
-target_link_libraries(sogl PUBLIC glm::glm)
+target_link_libraries(sogl PUBLIC glm::glm freetype harfbuzz)
 if(SOGL_DESKTOP)
-    target_link_libraries(sogl PUBLIC libglew_static glfw freetype harfbuzz)
+    target_link_libraries(sogl PUBLIC libglew_static glfw)
 endif()
 
-set_target_properties(sogl PROPERTIES DEBUG_POSTFIX -d)
-set_target_properties(sogl PROPERTIES CXX_STANDARD 20)
+set_target_properties(sogl PROPERTIES
+    DEBUG_POSTFIX -d
+    CXX_STANDARD 20
+)
 if (SOGL_WASM)
-    set_target_properties(sogl PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
+    target_link_options(sogl PUBLIC -sUSE_GLFW=3 -sUSE_WEBGL2=1 -sFULL_ES3=1)
 endif()
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_LIST_DIR})
