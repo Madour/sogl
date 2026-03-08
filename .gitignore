@@ -1,5 +1,7 @@
 .idea/
 .vs/
+_build*
+_deps*
 build/
 build-*/
 cmake-build-*/
