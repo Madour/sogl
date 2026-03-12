@@ -15,6 +15,7 @@ include(cmake/Helpers.cmake)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
     set(SOGL_WASM TRUE)
+    set(CMAKE_EXECUTABLE_SUFFIX .html)
 else()
     set(SOGL_DESKTOP TRUE)
 endif()

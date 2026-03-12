@@ -1,11 +1,30 @@
 macro(add_example name source)
     add_executable(${name} ${source})
-    target_link_libraries(${name} PRIVATE sogl)
-    set_target_properties(${name} PROPERTIES DEBUG_POSTFIX -d)
-    set_target_properties(${name} PROPERTIES CXX_STANDARD 20)
+    target_link_libraries(${name} PRIVATE sogl::sogl)
+    set_target_properties(${name} PROPERTIES
+        DEBUG_POSTFIX -d
+        CXX_STANDARD 20
+    )
     if (SOGL_WASM)
-        set_target_properties(${name} PROPERTIES SUFFIX ".html")
-        set_target_properties(${name} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
+       target_link_options(${name} PRIVATE -sNO_DISABLE_EXCEPTION_CATCHING)
+    endif()
+
+    set(assets_dir "")
+
+    set(extra_args ${ARGN})
+    list(LENGTH extra_args extra_args_count)
+    if (${extra_args_count} GREATER 0)
+        list(GET extra_args 0 assets_dir)
+    endif ()
+
+    if (NOT ${assets_dir} STREQUAL "")
+        add_custom_command(PRE_BUILD TARGET ${name}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/${assets_dir} $<TARGET_FILE_DIR:${name}>/${assets_dir}
+        )
+
+        if (SOGL_WASM)
+            target_link_options(${name} PRIVATE -sFORCE_FILESYSTEM --embed-file ${assets_dir}/)
+        endif()
     endif()
 endmacro()
 
