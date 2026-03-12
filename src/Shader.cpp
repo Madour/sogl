@@ -4,8 +4,11 @@
 
 #include <GL/glew.h>
 
+#include <algorithm>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <ranges>
 
 using namespace sogl;
 
@@ -19,6 +22,15 @@ namespace {
         return message;
     }
 
+    auto to_string(const Shader::Type& type) -> std::string {
+        switch (type) {
+                case Shader::Type::Vertex: return "Vertex";
+                case Shader::Type::Fragment: return "Fragment";
+                case Shader::Type::Geometry: return "Geometry";
+                default: return "Unknown";
+            }
+    }
+
     auto compile(Shader::Type type, const std::string& src, const unsigned& handle) -> bool {
         auto* src_c = src.c_str();
         glShaderSource(handle, 1, &src_c, nullptr);
@@ -27,18 +39,52 @@ namespace {
         int status;
         glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
 
-        auto to_string = [] (const Shader::Type& t) -> std::string {
-            switch (t) {
-                case Shader::Type::Vertex: return "Vertex";
-                case Shader::Type::Fragment: return "Fragment";
-                case Shader::Type::Geometry: return "Geometry";
-                default: return "Unknown";
+        if (status == GL_FALSE) {
+            std::cerr << "Failed to compile " << to_string(type) << " shader :\n"
+                      << get_shader_info_log(handle) << std::endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    std::vector<std::string> split(const std::string& input, char delimiter)
+    {
+        std::vector<std::string> result;
+
+        for (auto&& part : input | std::views::split(delimiter))
+            result.emplace_back(part.begin(), part.end());
+
+        return result;
+    }
+
+    auto compile(Shader::Type type, const std::vector<std::string>& src, const unsigned& handle) -> bool {
+        auto sources = src;
+        std::vector<char*> shader_sources_cstr;
+        // cleanup sources by removing the version string starting from the second shader source
+        for (auto& shader_source : sources) {
+            if (!shader_sources_cstr.empty()) {
+                auto shader_source_lines = split(shader_source, '\n');
+
+                auto is_version_line = [](const std::string& s) { return s.find("#version") != std::string::npos; };
+                std::erase_if(shader_source_lines, is_version_line);
+
+                shader_source.clear();
+                for (auto& line : shader_source_lines) {
+                    shader_source += line;
+                }
             }
-        };
+            shader_sources_cstr.push_back(shader_source.data());
+        }
+        glShaderSource(handle, static_cast<int>(shader_sources_cstr.size()), shader_sources_cstr.data(), nullptr);
+        glCompileShader(handle);
+
+        int status;
+        glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
 
         if (status == GL_FALSE) {
             std::cerr << "Failed to compile " << to_string(type) << " shader :\n"
-                    << get_shader_info_log(handle) << std::endl;
+                      << get_shader_info_log(handle) << std::endl;
             return false;
         }
 
@@ -47,17 +93,21 @@ namespace {
 }
 
 template <>
+void Shader::CompiledShaderObject<Shader::Type::Vertex>::destroy() {
+    if (handle) glDeleteShader(handle);
+}
+template <>
 Shader::CompiledShaderObject<Shader::Type::Vertex>::CompiledShaderObject(const std::string& src) {
     handle = glCreateShader(GL_VERTEX_SHADER);
     if (!compile(Shader::Type::Vertex, src, handle)) {
         destroy();
     }
 }
+
 template <>
-void Shader::CompiledShaderObject<Shader::Type::Vertex>::destroy() {
+void Shader::CompiledShaderObject<Shader::Type::Geometry>::destroy() {
     if (handle) glDeleteShader(handle);
 }
-
 template <>
 Shader::CompiledShaderObject<Shader::Type::Geometry>::CompiledShaderObject(const std::string& src) {
     handle = glCreateShader(GL_GEOMETRY_SHADER);
@@ -65,11 +115,11 @@ Shader::CompiledShaderObject<Shader::Type::Geometry>::CompiledShaderObject(const
         destroy();
     }
 }
+
 template <>
-void Shader::CompiledShaderObject<Shader::Type::Geometry>::destroy() {
+void Shader::CompiledShaderObject<Shader::Type::Fragment>::destroy() {
     if (handle) glDeleteShader(handle);
 }
-
 template <>
 Shader::CompiledShaderObject<Shader::Type::Fragment>::CompiledShaderObject(const std::string& src) {
     handle = glCreateShader(GL_FRAGMENT_SHADER);
@@ -77,9 +127,13 @@ Shader::CompiledShaderObject<Shader::Type::Fragment>::CompiledShaderObject(const
         destroy();
     }
 }
+
 template <>
-void Shader::CompiledShaderObject<Shader::Type::Fragment>::destroy() {
-    if (handle) glDeleteShader(handle);
+Shader::CompiledShaderObject<Shader::Type::Fragment>::CompiledShaderObject(const std::vector<std::string>& src) {
+    handle = glCreateShader(GL_FRAGMENT_SHADER);
+    if (!compile(Shader::Type::Fragment, src, handle)) {
+        destroy();
+    }
 }
 
 void Shader::Program::create() {
@@ -161,6 +215,10 @@ auto Shader::compileGeometry(const std::string& src) -> CompiledShaderObject<Typ
 }
 
 auto Shader::compileFragment(const std::string& src) -> CompiledShaderObject<Type::Fragment> {
+    return CompiledShaderObject<Type::Fragment>(src);
+}
+
+auto Shader::compileFragment(const std::vector<std::string>& src) -> CompiledShaderObject<Type::Fragment> {
     return CompiledShaderObject<Type::Fragment>(src);
 }
 
