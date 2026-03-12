@@ -62,7 +62,7 @@ int main() {
         uniform vec2 resolution;
 
         vec4 postprocess(vec2 uv) {
-            vec2 offset = 0.08 * vec2(cos(time + uv.y * 24), 0);
+            vec2 offset = 0.08 * vec2(cos(time + uv.y * 24.), 0.);
             return texture(texture0, uv + offset);
         }
     ));
@@ -96,7 +96,7 @@ int main() {
 
             float sigma = 10.0;
             for (int j = 0; j <= kSize; ++j) {
-                kernel[kSize + j] = kernel[kSize - j] = normpdf(j, sigma);
+                kernel[kSize + j] = kernel[kSize - j] = normpdf(float(j), sigma);
             }
 
             float Z = 0.0;
@@ -123,8 +123,8 @@ int main() {
     const sogl::PostProcess* current_post_process = &waves_post_process;
 
     auto update_fn = [&]() {
-        while (auto event = window.nextEvent()) {
-            if (auto key_press = event->as<sogl::Event::KeyPress>()) {
+        while (const auto event = window.nextEvent()) {
+            if (const auto& key_press = event->as<sogl::Event::KeyPress>()) {
                 if (key_press->key == sogl::Key::Escape) {
                     window.close();
                 }
@@ -132,7 +132,7 @@ int main() {
                     static size_t i = 1;
                     i = (i + 1) % 4;
                     switch (i) {
-                        case 0: current_post_process = &sogl::PostProcess::getDefault(); break;
+                        default: current_post_process = &sogl::PostProcess::getDefault(); break;
                         case 1: current_post_process = &waves_post_process; break;
                         case 2: current_post_process = &wiggle_post_process; break;
                         case 3: current_post_process = &blur_post_process; break;
@@ -164,11 +164,13 @@ int main() {
     }
 #else
     struct App {
+        std::function<void()> update;
         std::function<void()> render;
     };
-    auto app = App{render_fn};
+    auto app = App{update_fn, render_fn};
     auto main_loop = [] (void* arg) {
         auto* app = static_cast<App*>(arg);
+        app->update();
         app->render();
     };
     // start emscripten main loop
