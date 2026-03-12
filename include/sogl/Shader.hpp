@@ -37,6 +37,7 @@ namespace sogl {
         class CompiledShaderObject : public ShaderObject {
         public:
             CompiledShaderObject(const std::string& src);
+            CompiledShaderObject(const std::vector<std::string>& src);
             void destroy();
         };
 
@@ -66,6 +67,8 @@ namespace sogl {
         static auto compileVertex(const std::string& src) -> CompiledShaderObject<Type::Vertex>;
         static auto compileGeometry(const std::string& src) -> CompiledShaderObject<Type::Geometry>;
         static auto compileFragment(const std::string& src) -> CompiledShaderObject<Type::Fragment>;
+
+        static auto compileFragment(const std::vector<std::string>& src) -> CompiledShaderObject<Type::Fragment>;
 
         template <typename... TShaderObjects>
         auto load(TShaderObjects&... shader_objects) -> bool {
