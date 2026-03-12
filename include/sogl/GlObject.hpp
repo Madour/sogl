@@ -5,9 +5,9 @@
 struct GlObject {
     GlObject() = default;
     GlObject(const GlObject&) = delete;
-    GlObject(GlObject&& other) { handle = other.handle; other.handle = 0; }
+    GlObject(GlObject&& other) noexcept { handle = other.handle; other.handle = 0; }
     GlObject& operator=(const GlObject&) = delete;
-    GlObject& operator=(GlObject&& other) { handle = other.handle; other.handle = 0; }
+    GlObject& operator=(GlObject&& other) noexcept { handle = other.handle; other.handle = 0; return *this; }
 
 protected:
     auto getHandle(const GlObject& other) const -> unsigned { return other.handle; }
