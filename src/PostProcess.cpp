@@ -1,5 +1,6 @@
 // Created by Modar Nasser on 26/11/2023.
 
+#include <vector>
 #include <sogl/PostProcess.hpp>
 
 
@@ -21,9 +22,6 @@ namespace {
 
     constexpr const auto* QUAD_FRAG_SRC = GLSL(330 core,
         precision highp float;
-        uniform sampler2D texture0;
-        uniform float time;
-        uniform vec2 resolution;
 
         in vec2 uv;
         out vec4 color;
@@ -44,14 +42,12 @@ PostProcess::PostProcess(const std::string& post_process_shader_src) {
 
 void PostProcess::set(const std::string& post_process_shader_src) {
     auto vert_shader = Shader::compileVertex(QUAD_VERT_SRC);
-    auto frag_shader = Shader::compileFragment(QUAD_FRAG_SRC);
-    auto postprocess_shader = Shader::compileFragment(post_process_shader_src);
+    auto frag_shader = Shader::compileFragment({ QUAD_FRAG_SRC, post_process_shader_src });
 
-    shader.load(vert_shader, frag_shader, postprocess_shader);
+    shader.load(vert_shader, frag_shader);
 
     vert_shader.destroy();
     frag_shader.destroy();
-    postprocess_shader.destroy();
 }
 
 auto PostProcess::getDefault() -> const PostProcess& {
