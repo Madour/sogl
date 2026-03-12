@@ -12,9 +12,9 @@
 #include <unordered_map>
 
 #if defined(EMSCRIPTEN)
-#define GLSL(version, src) "#version 300 es\n" #src
+#define GLSL(version, src) "#version 300 es\n" #src"\n"
 #else
-#define GLSL(version, src) "#version "#version"\n" #src
+#define GLSL(version, src) "#version "#version"\n" #src"\n"
 #endif
 
 namespace sogl {
