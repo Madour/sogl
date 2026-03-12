@@ -35,7 +35,6 @@ namespace sogl {
     private:
         unsigned m_framebuffer = 0;
         unsigned m_render_texture = 0;
-        unsigned m_depth_buffer = 0;
 
         VertexArray<glm::vec2, glm::vec2> m_vertex_array;
 
