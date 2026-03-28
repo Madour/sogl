@@ -80,7 +80,7 @@ auto Font::getGlyph(std::uint32_t codepoint, int size) -> const Glyph& {
 
     setPixelSize(size);
 
-    if (m_glyphpages.count(size) == 0) {
+    if (!m_glyphpages.contains(size)) {
         auto& glyphset = m_glyphpages[size];
         auto texture_size = size * 11;
         auto max_texture_size = Texture::getMaximumSize();
@@ -92,49 +92,52 @@ auto Font::getGlyph(std::uint32_t codepoint, int size) -> const Glyph& {
 
     auto& glyphpage = m_glyphpages[size];
 
-    if (glyphpage.glyphs.count(codepoint) > 0) {
+    if (glyphpage.glyphs.contains(codepoint)) {
         return glyphpage.glyphs.at(codepoint);
     }
-    else {
-        FT_Load_Glyph(ft_face, codepoint, FT_LOAD_RENDER);
-        auto& ft_glyph = ft_face->glyph;
 
-        auto& glyph = glyphpage.glyphs[codepoint];
-        glyph.advance = static_cast<float>(ft_glyph->advance.x) / 64.f;
-        glyph.bearing.x = static_cast<float>(ft_glyph->metrics.horiBearingX) / 64.f;
-        glyph.bearing.y = static_cast<float>(ft_glyph->metrics.horiBearingY) / 64.f;
-        glyph.tex_pos.x = static_cast<float>(glyphpage.next_pos.x);
-        glyph.tex_pos.y = static_cast<float>(glyphpage.next_pos.y);
-        glyph.tex_size.x = static_cast<float>(ft_glyph->bitmap.width);
-        glyph.tex_size.y = static_cast<float>(ft_glyph->bitmap.rows);
+    FT_Load_Glyph(ft_face, codepoint, FT_LOAD_RENDER);
+    const auto& ft_glyph = ft_face->glyph;
 
-        assert(ft_glyph->bitmap.width == ft_glyph->bitmap.pitch);
+    auto& glyph = glyphpage.glyphs[codepoint];
+    // FreeType metrics units are expressed in 26.6 pixel format, which allows
+    // expressing 2^6=64 subpixels. Divide by 64.f to get back to pixels units.
+    glyph.advance = static_cast<float>(ft_glyph->advance.x) / 64.f;
+    glyph.bearing.x = static_cast<float>(ft_glyph->metrics.horiBearingX) / 64.f;
+    glyph.bearing.y = static_cast<float>(ft_glyph->metrics.horiBearingY) / 64.f;
+    glyph.tex_pos.x = static_cast<float>(glyphpage.next_pos.x);
+    glyph.tex_pos.y = static_cast<float>(glyphpage.next_pos.y);
+    glyph.tex_size.x = static_cast<float>(ft_glyph->bitmap.width);
+    glyph.tex_size.y = static_cast<float>(ft_glyph->bitmap.rows);
 
-        std::vector<std::uint8_t> pixels;
-        pixels.reserve(static_cast<size_t>(glyph.tex_size.x * glyph.tex_size.y * 4));
-        for (size_t i = 0; i < static_cast<size_t>(glyph.tex_size.x * glyph.tex_size.y); ++i) {
-            pixels.push_back(0xff);
-            pixels.push_back(0xff);
-            pixels.push_back(0xff);
-            pixels.push_back(ft_glyph->bitmap.buffer[i]);
-        }
+    assert(ft_glyph->bitmap.width == ft_glyph->bitmap.pitch);
 
-        glyphpage.texture.copy(
-            pixels.data(),
-            static_cast<int>(glyph.tex_pos.x),
-            static_cast<int>(glyph.tex_pos.y),
-            static_cast<int>(glyph.tex_size.x),
-            static_cast<int>(glyph.tex_size.y)
-        );
+    const auto glyph_dimension = static_cast<size_t>(glyph.tex_size.x * glyph.tex_size.y);
 
-        glyphpage.next_pos.x += static_cast<int>(glyph.tex_size.x);
-        if (glyphpage.next_pos.x + size >= glyphpage.texture.getSize().x) {
-            glyphpage.next_pos.x = 0;
-            glyphpage.next_pos.y += size;
-        }
-
-        return glyph;
+    std::vector<std::uint8_t> pixels;
+    pixels.reserve(glyph_dimension * 4);
+    for (size_t i = 0; i < glyph_dimension; ++i) {
+        pixels.push_back(0xff);
+        pixels.push_back(0xff);
+        pixels.push_back(0xff);
+        pixels.push_back(ft_glyph->bitmap.buffer[i]);
     }
+
+    glyphpage.texture.copy(
+        pixels.data(),
+        static_cast<int>(glyph.tex_pos.x),
+        static_cast<int>(glyph.tex_pos.y),
+        static_cast<int>(glyph.tex_size.x),
+        static_cast<int>(glyph.tex_size.y)
+    );
+
+    glyphpage.next_pos.x += static_cast<int>(glyph.tex_size.x) + 1;
+    if (glyphpage.next_pos.x + size >= glyphpage.texture.getSize().x) {
+        glyphpage.next_pos.x = 0;
+        glyphpage.next_pos.y += size+20;
+    }
+
+    return glyph;
 }
 
 auto Font::getTexture(int size) const -> const Texture& {
@@ -163,7 +166,7 @@ void Font::shape(void* buffer, int size, std::vector<Glyph::Shape>& glyphs) {
         auto& glyph = getGlyph(this_info.codepoint, size);
 
         double pos_x = curr_x + this_pos.x_offset / 64. + glyph.bearing.x;
-        double pos_y = this_pos.y_offset / 64. - glyph.bearing.y;
+        double pos_y = -(this_pos.y_offset / 64. + glyph.bearing.y);
         double adv_x = this_pos.x_advance / 64.;
         double adv_y = this_pos.y_advance / 64.;
 
@@ -171,6 +174,12 @@ void Font::shape(void* buffer, int size, std::vector<Glyph::Shape>& glyphs) {
         double tex_y = glyph.tex_pos.y;
         double tex_w = glyph.tex_size.x;
         double tex_h = glyph.tex_size.y;
+
+        // printf("codepoint: %04x\n", this_info.codepoint);
+        // printf("  x: %g + %g => %g\n", this_pos.x_offset/64., glyph.bearing.x, pos_x);
+        // printf("  y: -(%g + %g) => %g\n", this_pos.y_offset/64., glyph.bearing.y, pos_y);
+        // printf("  w=%d, h=%d\n", int(tex_w), int(tex_h));
+        // printf("  u=%d, v=%d\n", int(tex_x), int(tex_y));
 
         glyphs[i].x = static_cast<float>(pos_x);
         glyphs[i].y = static_cast<float>(pos_y);
