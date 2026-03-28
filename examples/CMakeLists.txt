@@ -19,7 +19,9 @@ macro(add_example name source)
 
     if (NOT ${assets_dir} STREQUAL "")
         add_custom_command(PRE_BUILD TARGET ${name}
+            COMMAND ${CMAKE_COMMAND} -E rm -rf $<TARGET_FILE_DIR:${name}>/${assets_dir}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/${assets_dir} $<TARGET_FILE_DIR:${name}>/${assets_dir}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/${assets_dir} ${CMAKE_CURRENT_BINARY_DIR}/${assets_dir}
         )
 
         if (SOGL_WASM)
@@ -33,3 +35,5 @@ add_example(02-events           02_events.cpp)
 add_example(03-cube             03_cube.cpp)
 add_example(04-camera           04_camera.cpp)
 add_example(05-post-processing  05_post_processing.cpp)
+add_example(06-font             06_font.cpp             06-assets)
+
