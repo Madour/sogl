@@ -5,7 +5,7 @@ configure_policies()
 
 project(
     sogl
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "A simple and light library for creating OpenGL application"
     LANGUAGES CXX
     HOMEPAGE_URL "https://github.com/Madour/sogl"
