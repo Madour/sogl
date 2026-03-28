@@ -21,8 +21,8 @@ void loadTextShader(sogl::Shader& shader) {
                          out vec2 tex;
                          void main() {
                              tex = i_tex / tex_size;
-                             float pos_x = i_pos.x * 2. / 1280 - 1.;
-                             float pos_y = i_pos.y * 2. / 720 - 1.;
+                             float pos_x = i_pos.x * 2. / 1280. - 1.;
+                             float pos_y = i_pos.y * 2. / 720. - 1.;
                              gl_Position = vec4(pos_x, -pos_y, 0, 1.0);
                          }
                     );
@@ -48,8 +48,8 @@ void loadDebugShader(sogl::Shader& shader) {
                          precision highp float;
                          layout (location = 0) in vec2 i_pos;
                          void main() {
-                             float pos_x = i_pos.x * 2. / 1280 - 1.;
-                             float pos_y = i_pos.y * 2. / 720 - 1.;
+                             float pos_x = i_pos.x * 2. / 1280. - 1.;
+                             float pos_y = i_pos.y * 2. / 720. - 1.;
                              gl_Position = vec4(pos_x, -pos_y, 0, 1.0);
                          }
                     );
