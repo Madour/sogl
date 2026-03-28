@@ -11,6 +11,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <map>
 
 using namespace sogl;
 
@@ -19,11 +20,36 @@ namespace {
         std::cerr << "Error " << error << ": " << description << std::endl;
     }
 
+    static std::map<GLenum, std::string> glEnumToString = {{
+        {GL_DEBUG_SOURCE_API, "API"},
+        {GL_DEBUG_SOURCE_WINDOW_SYSTEM, "WINDOW_SYSTEM"},
+        {GL_DEBUG_SOURCE_SHADER_COMPILER, "SHADER_COMPILER"},
+        {GL_DEBUG_SOURCE_THIRD_PARTY, "THIRD_PARTY"},
+        {GL_DEBUG_SOURCE_APPLICATION, "APPLICATION"},
+        {GL_DEBUG_SOURCE_OTHER, "OTHER"},
+        {GL_DEBUG_TYPE_ERROR, "ERROR"},
+        {GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DEPRECATED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UNDEFINED_BEHAVIOR"},
+        {GL_DEBUG_TYPE_PORTABILITY, "PORTABILITY"},
+        {GL_DEBUG_TYPE_PERFORMANCE, "PERFORMANCE"},
+        {GL_DEBUG_TYPE_OTHER, "OTHER"},
+        {GL_DEBUG_TYPE_MARKER, "MARKER"},
+        {GL_DEBUG_TYPE_PUSH_GROUP, "PUSH_GROUP"},
+        {GL_DEBUG_TYPE_POP_GROUP, "POP_GROUP"},
+        {GL_DEBUG_SEVERITY_NOTIFICATION, "NOTIFICATION"},
+        {GL_DEBUG_SEVERITY_HIGH, "HIGH"},
+        {GL_DEBUG_SEVERITY_MEDIUM, "MEDIUM"},
+        {GL_DEBUG_SEVERITY_LOW, "LOW"},
+    }};
+
     void GLAPIENTRY gl_debug_msg_cb(GLenum source, GLenum type, GLuint id, GLenum severity,
                                     GLsizei length, const GLchar* message, const void* param) {
-        std::cerr << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "")
-                  << "id = " << id << ", source = " << source << ", type = " << type << ", severity = " << severity
-                  << "\n" << message << "\n" << std::endl;
+        std::cerr << "GL Debug Message: " << std::hex << id << std::dec
+                  << "\n" << glEnumToString[type]
+                  << "in " << glEnumToString[source]
+                  << "with " << glEnumToString[severity] << "severity:"
+                  << "\n" << message
+                  << std::endl;
     }
 
     inline auto getGlfwWindow(void* handle) -> GLFWwindow*{
