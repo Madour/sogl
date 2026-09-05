@@ -13,6 +13,7 @@ using namespace sogl;
 FrameBuffer::FrameBuffer() {
     glGenFramebuffers(1, &m_framebuffer);
     glGenTextures(1, &m_render_texture);
+    glGenRenderbuffers(1, &m_depth_render_buffer);
 
     m_vertex_array.setPrimitiveType(Primitive::Triangles);
     m_vertex_array.pushQuad({{
@@ -24,6 +25,7 @@ FrameBuffer::FrameBuffer() {
 }
 
 FrameBuffer::~FrameBuffer() {
+    glDeleteRenderbuffers(1, &m_depth_render_buffer);
     glDeleteTextures(1, &m_render_texture);
     glDeleteFramebuffers(1, &m_framebuffer);
 }
@@ -41,6 +43,10 @@ void FrameBuffer::create(int width, int height) {
     // attach render texture and depth render buffer to frame buffer
     glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_render_texture, 0);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depth_render_buffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, m_size.x, m_size.y);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depth_render_buffer);
 
     if(auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER); status != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete! (0x" << std::hex << status << ")" << std::dec << std::endl;
